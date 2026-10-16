@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk"><ItemGroup>
+<ProjectReference Include="../Nexo.Domain/Nexo.Domain.csproj" />
+<PackageReference Include="Dapper" Version="2.1.66" />
+<PackageReference Include="MySqlConnector" Version="2.4.0" />
+</ItemGroup></Project>

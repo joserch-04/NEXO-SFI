@@ -1,0 +1,20 @@
+.env
+.env.*
+!.env.example
+*.dump
+*.backup.sql
+database/backups/
+node_modules/
+bin/
+obj/
+
+.vs/
+TestResults/
+*.user
+*.suo
+
+# Configuración privada de desarrollo
+appsettings.Local.json
+
+# Estado personal del editor Obsidian
+.obsidian/
