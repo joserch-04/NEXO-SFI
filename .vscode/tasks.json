@@ -1,0 +1,12 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    { "label": "NEXO: detener servidores", "type": "process", "command": "powershell", "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/scripts/Stop-Local.ps1"], "problemMatcher": [] },
+    { "label": "NEXO: configurar HTTPS", "type": "process", "command": "powershell", "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/scripts/Configure-Local.ps1"], "problemMatcher": [] },
+    { "label": "NEXO: MySQL", "type": "process", "command": "docker", "args": ["compose", "up", "-d", "--wait"], "options": { "cwd": "${workspaceFolder}" }, "problemMatcher": [] },
+    { "label": "NEXO: API", "type": "process", "command": "dotnet", "args": ["run", "--project", "backend/Nexo.Api", "--launch-profile", "https"], "options": { "cwd": "${workspaceFolder}" }, "dependsOn": "NEXO: MySQL", "problemMatcher": "$msCompile", "presentation": { "panel": "dedicated", "reveal": "always" } },
+    { "label": "NEXO: frontend", "type": "process", "command": "npm.cmd", "args": ["run", "dev"], "options": { "cwd": "${workspaceFolder}/frontend/nexo-web" }, "problemMatcher": [], "presentation": { "panel": "dedicated", "reveal": "always" } },
+    { "label": "NEXO: iniciar todo", "dependsOn": ["NEXO: API", "NEXO: frontend"], "dependsOrder": "parallel", "problemMatcher": [] },
+    { "label": "NEXO: compilar API", "type": "process", "command": "dotnet", "args": ["build", "backend/Nexo.Api"], "options": { "cwd": "${workspaceFolder}" }, "problemMatcher": "$msCompile" }
+  ]
+}

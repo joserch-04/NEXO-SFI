@@ -1,0 +1,54 @@
+@import "tailwindcss";
+@theme { --font-sans: "Segoe UI", system-ui, sans-serif; }
+@layer base {
+  body { @apply m-0 bg-[#f4f6f3] text-[#243c36] font-sans; }
+  h1 { @apply text-3xl md:text-4xl font-semibold tracking-tight mb-5; }
+  h2 { @apply text-xl font-semibold mb-3; }
+  h3 { @apply font-semibold mt-6 mb-2; }
+  p { @apply leading-relaxed; }
+  button, .link-button { @apply inline-block rounded-lg bg-[#19634f] text-white px-5 py-3 font-semibold cursor-pointer hover:bg-[#124b3d] transition-colors; }
+  button:disabled { @apply opacity-50 cursor-not-allowed; }
+  button:focus-visible, a:focus-visible, input:focus-visible { @apply outline-2 outline-offset-4 outline-[#bd791c]; }
+  label { @apply block font-medium mt-5; }
+  input { @apply block w-full rounded-lg border border-[#b8c6bf] bg-white px-3 py-3 mt-2; }
+  form button { @apply mt-6 w-full; }
+  small { @apply text-sm; }
+  th { @apply text-left text-xs uppercase tracking-wider text-[#63756b] pb-4; }
+  td { @apply py-4 border-t border-[#e2e8e1]; }
+  table { @apply w-full; }
+}
+@layer components {
+  .card { @apply bg-white border border-[#e0e7df] rounded-2xl p-6 md:p-8; }
+  .eyebrow { @apply text-[11px] tracking-[0.16em] font-bold text-[#62786d] mb-4; }
+  .brand { @apply text-3xl font-black tracking-tight; }
+  .brand span { @apply font-light; }
+  .notice { @apply rounded-lg bg-[#fff0e7] text-[#923e20] p-4 my-4 text-sm; }
+  .secondary { @apply bg-transparent text-[#255947] border border-[#b8c9bf] hover:bg-[#e6eee7]; }
+  .badge { @apply inline-block text-xs bg-[#e5efe5] text-[#315c42] rounded-full px-3 py-1.5; }
+  .login { @apply min-h-screen grid lg:grid-cols-2; }
+  .intro { @apply bg-[#123b35] text-white p-10 md:p-20 flex flex-col justify-center; }
+  .intro .eyebrow { @apply mt-20 text-[#bcd0b7]; }
+  .intro h1 { @apply text-5xl md:text-6xl leading-tight; }
+  .intro p { @apply max-w-md text-[#d0ddd3]; }
+  .intro small { @apply mt-16 text-[#acc7b4]; }
+  .login-form { @apply self-center m-6 md:m-16 max-w-lg; }
+  .login-form > small { @apply block mt-8 text-[#62786d]; }
+  .shell { @apply min-h-screen lg:grid lg:grid-cols-[250px_1fr]; }
+  aside { @apply p-6 bg-[#123b35] text-white flex flex-col; }
+  aside .eyebrow { @apply text-[#a4bcb1] mt-12; }
+  nav { @apply flex lg:flex-col gap-2 flex-wrap; }
+  nav a { @apply px-4 py-3 rounded-lg text-[#c7d7ce]; }
+  nav a.active { @apply bg-[#2a5449] text-white; }
+  .sidebar-bottom { @apply mt-auto pt-10; }
+  .sidebar-bottom button { @apply mt-4 text-white border-[#54786a]; }
+  .workspace { @apply min-w-0 flex flex-col; }
+  header { @apply flex flex-wrap gap-3 justify-between items-center border-b border-[#dfe6dc] px-6 md:px-10 py-5 bg-white; }
+  .workspace main { @apply p-6 md:p-10 flex-1 max-w-[1400px] w-full mx-auto; }
+  footer { @apply px-10 py-5 text-xs text-[#63756b]; }
+  .lead { @apply text-[#63756b] mb-8; }
+  .hero { @apply bg-[#dfeada] rounded-2xl p-8 md:p-12; }
+  .hero h2 { @apply text-3xl mt-6; }
+  .hero p { @apply max-w-xl mb-7; }
+  .pagination { @apply flex items-center justify-between gap-3 mt-6; }
+  .startup { @apply max-w-xl mx-auto mt-20; }
+}

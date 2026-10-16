@@ -1,6 +1,6 @@
 # API REST
 
-Contrato preliminar vinculado a [[Requisitos]] y [[Modelo preliminar]]. Base `/api/v1`; JSON UTF-8, HTTPS. Fase 3 implementa únicamente GET /api/v1/health/live y GET /api/v1/health/ready, más OpenAPI en desarrollo; véase [[Fase 3]]. Las demás rutas siguen propuestas.
+Contrato preliminar vinculado a [[Requisitos]] y [[Modelo preliminar]]. Base `/api/v1`; JSON UTF-8, HTTPS. Fase 3 implementa únicamente GET /api/v1/health/live y GET /api/v1/health/ready, más OpenAPI en desarrollo; véase [[Fase 3]]. Fase 4 implementa las rutas de sesión, usuarios, roles y permisos; véase [[Fase 4]] para sus contratos efectivos y restricciones. Las demás rutas siguen propuestas.
 
 ## Convenciones
 
@@ -50,7 +50,7 @@ Las rutas agrupadas con `{id}` se expandirán en OpenAPI durante implementación
 |GET /restauraciones/{id}|restauraciones.ejecutar; estado del trabajo, guardado fuera de la BD restaurada.|
 |GET /health/live; GET /health/ready|Sondeos mínimos sin datos internos; disponibilidad de BD solo en readiness.|
 
-Permisos sugeridos: administrador recibe el catálogo aprobado; cajero consulta productos, abre/cierra su turno, registra ventas y movimientos autorizados; consulta accede únicamente a lecturas asignadas. Exportar, ver auditoría y administrar respaldos requieren permisos separados. La lista efectiva se revisará antes de Fase 4.
+Permisos sugeridos: administrador recibe el catálogo aprobado; cajero consulta productos, abre/cierra su turno, registra ventas y movimientos autorizados; consulta accede únicamente a lecturas asignadas. Exportar, ver auditoría y administrar respaldos requieren permisos separados. La lista administrativa efectiva y sus restricciones se documentan en [[Fase 4]].
 
 ## Venta: ejemplo conceptual
 

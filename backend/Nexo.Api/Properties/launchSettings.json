@@ -1,5 +1,14 @@
 {
   "profiles": {
+    "https": {
+      "applicationUrl": "https://localhost:7080;http://localhost:5080",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "DOTNET_ENVIRONMENT": "Development"
+      },
+      "launchBrowser": false,
+      "commandName": "Project"
+    },
     "http": {
       "commandName": "Project",
       "launchBrowser": false,

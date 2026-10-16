@@ -71,7 +71,7 @@ DROP PROCEDURE nexo_migrate_$version;
     foreach ($table in $tables) {
         $table = $table.Trim()
         if ($table -notmatch '^[a-z_]+$') { throw 'Tabla no válida' }
-        $rights = if ($table -eq 'schema_migrations') { 'SELECT' } elseif ($table -in @('auditoria','movimientos_inventario')) { 'SELECT, INSERT' } else { 'SELECT, INSERT, UPDATE' }
+        $rights = if ($table -eq 'schema_migrations') { 'SELECT' } elseif ($table -in @('usuario_roles','rol_permisos')) { 'SELECT, INSERT, UPDATE, DELETE' } elseif ($table -in @('auditoria','movimientos_inventario')) { 'SELECT, INSERT' } else { 'SELECT, INSERT, UPDATE' }
         $grants += "GRANT $rights ON nexo.$table TO 'nexo_app'@'%';`n"
     }
     Invoke-Sql $grants | Out-Null

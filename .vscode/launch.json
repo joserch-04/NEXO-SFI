@@ -1,0 +1,14 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "NEXO: depurar API HTTPS", "type": "coreclr", "request": "launch",
+      "preLaunchTask": "NEXO: compilar API",
+      "program": "${workspaceFolder}/backend/Nexo.Api/bin/Debug/net10.0/Nexo.Api.dll",
+      "cwd": "${workspaceFolder}/backend/Nexo.Api", "console": "integratedTerminal",
+      "env": { "ASPNETCORE_ENVIRONMENT": "Development", "DOTNET_ENVIRONMENT": "Development", "ASPNETCORE_URLS": "https://localhost:7080;http://localhost:5080" },
+      "stopAtEntry": false
+    },
+    { "name": "NEXO: depurar frontend", "type": "msedge", "request": "launch", "url": "https://localhost:5173", "webRoot": "${workspaceFolder}/frontend/nexo-web" }
+  ]
+}

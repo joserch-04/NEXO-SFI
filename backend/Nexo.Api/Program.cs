@@ -5,7 +5,7 @@ using Nexo.Application;
 using Nexo.Domain;
 using Nexo.Infrastructure;
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(args.Where(a => a != "--bootstrap-admin").ToArray());
 #if DEBUG
 // Visual Studio también puede iniciar el ejecutable sin aplicar launchSettings.json.
 // En Debug permitimos recuperar el secreto local aunque no se establezca Development.
@@ -34,6 +34,7 @@ builder.Services.AddScoped<IDatabaseProbe>(services => new MySqlDatabaseProbe(
     errorCode => services.GetRequiredService<ILogger<MySqlDatabaseProbe>>()
         .LogWarning("No se pudo conectar con MySQL. Código: {ErrorCode}", errorCode)));
 builder.Services.AddScoped<ReadinessService>();
+builder.AddSecurity();
 builder.Services.AddOpenApi();
 builder.Services.AddProblemDetails(options => options.CustomizeProblemDetails = context =>
 {
@@ -44,7 +45,7 @@ builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 var origins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
 builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
 {
-    if (origins.Length > 0) policy.WithOrigins(origins).WithMethods("GET").WithHeaders("Content-Type");
+    if (origins.Length > 0) policy.WithOrigins(origins).WithMethods("GET", "POST", "PUT", "DELETE").WithHeaders("Content-Type", "Authorization", "X-Nexo-CSRF").AllowCredentials();
 }));
 var app = builder.Build();
 if (string.IsNullOrWhiteSpace(app.Configuration.GetConnectionString("MySql")))
@@ -58,7 +59,21 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
     app.UseHttpsRedirection();
 }
+app.Use(async (context, next) =>
+{
+    var path = context.Request.Path;
+    if (!context.Request.IsHttps && (path.StartsWithSegments("/api/v1/auth") || path.StartsWithSegments("/api/v1/usuarios") || path.StartsWithSegments("/api/v1/roles") || path.StartsWithSegments("/api/v1/permisos")))
+    {
+        await Results.Problem(statusCode: 400, title: "HTTPS requerido", extensions: new Dictionary<string, object?> { ["code"] = "https_required" }).ExecuteAsync(context);
+        return;
+    }
+    await next(context);
+});
 app.UseCors();
+app.UseRateLimiter();
+app.UseAuthentication();
+app.UseAuthorization();
+app.MapSecurity();
 if (app.Environment.IsDevelopment()) app.MapOpenApi();
 var health = app.MapGroup("/api/v1/health").WithTags("Operación");
 health.MapGet("/live", () => TypedResults.Ok(new ReadinessResult("alive")))
@@ -71,8 +86,32 @@ health.MapGet("/ready", async (ReadinessService service, CancellationToken cance
         extensions: new Dictionary<string, object?> { ["code"] = "database_unavailable" });
 }).WithName("Readiness").WithSummary("Comprueba la conexión MySQL.")
   .Produces<ReadinessResult>().ProducesProblem(503);
+if (args.Contains("--bootstrap-admin"))
+{
+    using var scope = app.Services.CreateScope();
+    Console.Write("Usuario: "); var username = Console.ReadLine() ?? "";
+    Console.Write("Nombre: "); var name = Console.ReadLine() ?? "";
+    Console.Write("Contraseña (no se muestra): ");
+    var password = new System.Text.StringBuilder();
+    if (Console.IsInputRedirected)
+    {
+        // Permite instalación automatizada por stdin, sin contraseñas en argumentos o archivos.
+        password.Append(Console.ReadLine() ?? "");
+    }
+    else
+    {
+        ConsoleKeyInfo key;
+        while ((key = Console.ReadKey(intercept: true)).Key != ConsoleKey.Enter)
+        {
+            if (key.Key == ConsoleKey.Backspace && password.Length > 0) password.Length--;
+            else if (!char.IsControl(key.KeyChar)) password.Append(key.KeyChar);
+        }
+    }
+    Console.WriteLine();
+    await scope.ServiceProvider.GetRequiredService<SecurityService>().Bootstrap(username, name, password.ToString());
+    password.Clear(); Console.WriteLine("Administrador inicial creado.");
+    return;
+}
 app.Run();
 
 public partial class Program;
- 
-

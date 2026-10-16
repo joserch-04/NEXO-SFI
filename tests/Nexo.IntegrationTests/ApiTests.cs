@@ -81,6 +81,7 @@ public class ApiTests
             builder.UseEnvironment(environment);
             builder.ConfigureAppConfiguration((_, config) => config.AddInMemoryCollection(new Dictionary<string, string?>
             {
+                ["Jwt:SigningKey"] = "test-only-key-for-nexo-with-at-least-32-bytes",
                 ["ConnectionStrings:MySql"] = "Server=127.0.0.1;Database=nexo;User ID=nexo_app;Connection Timeout=2",
                 ["Cors:AllowedOrigins:0"] = "http://localhost:5173"
             }));

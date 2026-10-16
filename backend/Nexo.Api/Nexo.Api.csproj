@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 <PropertyGroup><UserSecretsId>nexo-api-local-development</UserSecretsId></PropertyGroup>
 <ItemGroup>
+<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.13" />
 <ProjectReference Include="../Nexo.Application/Nexo.Application.csproj" />
 <ProjectReference Include="../Nexo.Infrastructure/Nexo.Infrastructure.csproj" />
 <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.13" />

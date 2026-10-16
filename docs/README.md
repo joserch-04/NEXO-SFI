@@ -1,9 +1,17 @@
 # NEXO — documentación del proyecto
 
 
-## Fase actual: backend base
+## Fase actual: frontend base
 
-La Fase 3 incorpora la solución ASP.NET Core 10, capas, conexión Dapper/MySQL, errores, OpenAPI y pruebas iniciales. Véanse [[Fase 3]] y [[Verificación Fase 3]]. La solicitud de Fase 2 autorizó implementar el modelo preliminar. Ya existen SQL, semillas y Compose; las notas de Fase 1 siguientes conservan el contexto del diseño. El archivo real de instrucciones actual es `AGENTS.md`.
+La Fase 5 incorpora React/TypeScript, Tailwind, rutas protegidas, formularios y cliente de sesión. Véanse [[Fase 5]] y [[Verificación Fase 5]] para instalación, funcionamiento y límites de verificación.
+
+Configuración aplicada de certificados, VS Code y Visual Studio 2026: [[Ejecución local IDE]].
+
+Alta/edición de cuentas de cajeros y consulta, roles y permisos: [[Administración de usuarios frontend]].
+
+Cambios de contraseña exclusivos del administrador: [[Política de contraseñas]].
+
+La Fase 4 implementa sesión JWT, refresh revocable, usuarios, roles y políticas. Véanse [[Fase 4]] y [[Verificación Fase 4]]. La Fase 3 incorpora la solución ASP.NET Core 10, capas, conexión Dapper/MySQL, errores, OpenAPI y pruebas iniciales. Véanse [[Fase 3]] y [[Verificación Fase 3]]. La solicitud de Fase 2 autorizó implementar el modelo preliminar. Ya existen SQL, semillas y Compose; las notas de Fase 1 siguientes conservan el contexto del diseño. El archivo real de instrucciones actual es `AGENTS.md`.
 
 - [[Fase 2]] — implementación, comandos, tablas y defensa técnica.
 - [[Diagrama entidad-relación]] — relaciones del SQL implementado.
@@ -37,4 +45,3 @@ Solo se producen notas Markdown en `docs/`. No existe código cuyo funcionamient
 ## Verificación e incidencias históricas de Fase 1
 
 Se leyó el archivo de instrucciones y se inspeccionó el árbol existente. La búsqueda inicial de `AGENTS.md` falló porque el archivo real se llama `AGENTS.md.md`; se localizó y leyó sin renombrarlo. La revisión documental verifica cobertura del alcance y coherencia entre notas; no equivale a pruebas funcionales, ejecución SQL, validación de Docker ni compilación. Estas permanecen pendientes.
-

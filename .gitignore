@@ -5,6 +5,10 @@
 *.backup.sql
 database/backups/
 node_modules/
+dist/
+.certs/
+.local/
+*.tsbuildinfo
 bin/
 obj/
 
