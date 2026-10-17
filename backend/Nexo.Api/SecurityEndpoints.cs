@@ -80,14 +80,14 @@ public static class SecurityEndpoints
         });
     }
     private static long Actor(HttpContext c) => long.Parse(c.User.FindFirstValue("sub")!, CultureInfo.InvariantCulture);
-    private static CookieOptions CookieOptions(DateTime? expires = null) => new() { HttpOnly = true, Secure = true, SameSite = SameSiteMode.Strict, Path = "/api/v1/auth", Expires = expires.HasValue ? new DateTimeOffset(DateTime.SpecifyKind(expires.Value, DateTimeKind.Utc)) : null, IsEssential = true };
+    private static CookieOptions CookieOptions() => new() { HttpOnly = true, Secure = true, SameSite = SameSiteMode.Strict, Path = "/api/v1/auth", IsEssential = true };
     private static IResult Issue(HttpContext c, SessionResult session, JwtSettings jwt)
     {
         var now = DateTime.UtcNow;
         var token = new JwtSecurityToken(jwt.Issuer, jwt.Audience,
             [new("sub", session.User.Id.ToString(CultureInfo.InvariantCulture)), new("name", session.User.Username), new("ver", session.User.Version.ToString(CultureInfo.InvariantCulture)), new("sid", session.Family), new("jti", Guid.NewGuid().ToString())],
             now, now.AddMinutes(10), new SigningCredentials(jwt.Key, SecurityAlgorithms.HmacSha256));
-        c.Response.Cookies.Append(Cookie, session.RefreshToken, CookieOptions(session.RefreshExpires));
+        c.Response.Cookies.Append(Cookie, session.RefreshToken, CookieOptions());
         c.Response.Headers.CacheControl = "no-store";
         return Results.Ok(new { accessToken = new JwtSecurityTokenHandler().WriteToken(token), tokenType = "Bearer", expiresIn = 600, user = session.User });
     }
@@ -112,7 +112,11 @@ public static class SecurityEndpoints
         auth.MapPost("/login", async (LoginInput input, SecurityService service, HttpContext c, Microsoft.Extensions.Options.IOptions<JwtSettings> jwt) =>
         {
             var session = await service.Login(input.Username, input.Password);
-            return session is null ? Results.Unauthorized() : Issue(c, session, jwt.Value);
+            if (session is null) return Results.Unauthorized();
+            // Cambiar de operador en el mismo navegador retira la familia anterior.
+            if (c.Request.Cookies.TryGetValue(Cookie, out var previous) && previous.Length <= 128)
+                await service.Logout(previous);
+            return Issue(c, session, jwt.Value);
         }).RequireRateLimiting("auth");
         auth.MapPost("/refresh", async (SecurityService service, HttpContext c, Microsoft.Extensions.Options.IOptions<JwtSettings> jwt) =>
         {

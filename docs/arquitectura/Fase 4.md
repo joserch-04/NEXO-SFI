@@ -1,5 +1,7 @@
 # Fase 4 — Seguridad y usuarios
 
+> Actualización del 16/10/2026: la política vigente es [[Sesiones en terminales compartidas]] (sin restauración automática, cookie de sesión, cinco minutos de inactividad y ocho horas absolutas). Las referencias de esta nota a siete días describen la implementación inicial, sustituida por la migración 004. Para cambios de contraseña rige [[Política de contraseñas]].
+
 Fecha: 15 de octubre de 2026. Véanse [[Fase 3]], [[API REST]], [[Verificación Fase 4]] y [[Requisitos]].
 
 ## Objetivo y alcance

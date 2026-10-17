@@ -35,8 +35,13 @@ internal sealed class MemorySession : ISecuritySession
     public Task SetPermissions(long role, long[] permissions) { RolePermissions[role] = permissions; return Task.CompletedTask; }
     public Task<int> AdminCount() => Task.FromResult(UserData.Values.Count(u => u.Active && UserRoleData.GetValueOrDefault(u.Id, []).Any(i => RoleData[i].Active && RoleData[i].Name == "Administrador")));
     public Task<RefreshSession?> Refresh(byte[] hash) => Task.FromResult(Sessions.Values.SingleOrDefault(s => s.Hash.SequenceEqual(hash)));
-    public Task<bool> FamilyActive(long user, string family) => Task.FromResult(Sessions.Values.Any(s => s.UserId == user && s.Family == family && s.Revoked is null && s.Expires > DateTime.UtcNow));
-    public Task<long> AddRefresh(long user, string family, byte[] hash, DateTime expires) { long id = Sessions.Count + 1; Sessions[id] = new(id, user, family, hash, expires, null); return Task.FromResult(id); }
+    public async Task<bool> FamilyActive(long user, string family)
+    {
+        var current = Sessions.Values.SingleOrDefault(s => s.UserId == user && s.Family == family && s.Revoked is null);
+        if (current is null || current.Expires <= DateTime.UtcNow || current.LastActivity <= DateTime.UtcNow.AddMinutes(-5)) { await RevokeFamily(family); return false; }
+        Sessions[current.Id] = current with { LastActivity = DateTime.UtcNow }; return true;
+    }
+    public Task<long> AddRefresh(long user, string family, byte[] hash, DateTime expires) { long id = Sessions.Count + 1; Sessions[id] = new(id, user, family, hash, expires, null, DateTime.UtcNow); return Task.FromResult(id); }
     public Task RevokeFamily(string family) { foreach (var s in Sessions.Values.Where(s => s.Family == family).ToArray()) Sessions[s.Id] = s with { Revoked = s.Revoked ?? DateTime.UtcNow }; return Task.CompletedTask; }
     public Task RevokeUser(long user) { foreach (var s in Sessions.Values.Where(s => s.UserId == user).ToArray()) Sessions[s.Id] = s with { Revoked = s.Revoked ?? DateTime.UtcNow }; return Task.CompletedTask; }
     public Task Rotate(long oldId, long newId) { Sessions[oldId] = Sessions[oldId] with { Revoked = DateTime.UtcNow }; return Task.CompletedTask; }

@@ -28,6 +28,8 @@ public class SecurityTests
         Assert.Equal(HttpStatusCode.OK, login.StatusCode);
         var cookie = login.Headers.GetValues("Set-Cookie").Single();
         Assert.Contains("secure", cookie); Assert.Contains("httponly", cookie); Assert.Contains("samesite=strict", cookie);
+        Assert.DoesNotContain("expires=", cookie, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("max-age=", cookie, StringComparison.OrdinalIgnoreCase);
         var payload = await login.Content.ReadFromJsonAsync<TokenResponse>();
         c.DefaultRequestHeaders.Authorization = new("Bearer", payload!.AccessToken);
         Assert.Equal(HttpStatusCode.OK, (await c.GetAsync("/api/v1/auth/me")).StatusCode);
@@ -196,6 +198,80 @@ public class SecurityTests
         Assert.NotNull(admin);
         await service.ChangePassword(1, 1, new("Password123456", "AdminChanged1234"));
         Assert.NotNull(await service.Login("admin", "AdminChanged1234"));
+    }
+
+    [Fact]
+    public async Task Shared_terminal_idle_timeout_revokes_access_and_refresh_and_absolute_limit_does_not_slide()
+    {
+        using var f = new Factory(); await f.Seed(); using var scope = f.Services.CreateScope();
+        var service = scope.ServiceProvider.GetRequiredService<SecurityService>();
+        var initial = (await service.Login("admin", Admin.Password))!;
+        Assert.InRange(initial.RefreshExpires, DateTime.UtcNow.AddHours(7.99), DateTime.UtcNow.AddHours(8.01));
+        var rotated = (await service.Refresh(initial.RefreshToken))!;
+        Assert.Equal(initial.RefreshExpires, rotated.RefreshExpires);
+        var current = f.Store.Db.Sessions.Values.Single(s => s.Family == rotated.Family && s.Revoked is null);
+        f.Store.Db.Sessions[current.Id] = current with { LastActivity = DateTime.UtcNow.AddMinutes(-5) };
+        Assert.Null(await service.Authenticate(rotated.User.Id, rotated.User.Version, rotated.Family));
+        Assert.Null(await service.Refresh(rotated.RefreshToken));
+        Assert.All(f.Store.Db.Sessions.Values.Where(s => s.Family == rotated.Family), s => Assert.NotNull(s.Revoked));
+    }
+
+    [Fact]
+    public async Task Refresh_cannot_revive_idle_session_without_a_resource_request()
+    {
+        using var f = new Factory(); await f.Seed(); using var scope = f.Services.CreateScope();
+        var service = scope.ServiceProvider.GetRequiredService<SecurityService>();
+        var session = (await service.Login("admin", Admin.Password))!;
+        var stored = f.Store.Db.Sessions.Values.Single(s => s.Family == session.Family);
+        f.Store.Db.Sessions[stored.Id] = stored with { LastActivity = DateTime.UtcNow.AddMinutes(-6) };
+        Assert.Null(await service.Refresh(session.RefreshToken));
+        Assert.NotNull(f.Store.Db.Sessions[stored.Id].Revoked);
+    }
+
+    [Fact]
+    public async Task Login_in_same_browser_revokes_the_previous_operator_session()
+    {
+        using var f = new Factory(); await f.Seed(); using var c = f.Client();
+        var previous = await Login(c);
+        c.DefaultRequestHeaders.Add("Cookie", previous.Cookie);
+        var replacement = await Login(c);
+        c.DefaultRequestHeaders.Authorization = new("Bearer", previous.AccessToken);
+        Assert.Equal(HttpStatusCode.Unauthorized, (await c.GetAsync("/api/v1/auth/me")).StatusCode);
+        c.DefaultRequestHeaders.Authorization = new("Bearer", replacement.AccessToken);
+        Assert.Equal(HttpStatusCode.OK, (await c.GetAsync("/api/v1/auth/me")).StatusCode);
+    }
+
+    [Theory]
+    [InlineData("/api/v1/productos")]
+    [InlineData("/api/v1/categorias")]
+    [InlineData("/api/v1/subcategorias")]
+    [InlineData("/api/v1/proveedores")]
+    [InlineData("/api/v1/ubicaciones")]
+    [InlineData("/api/v1/inventario/existencias")]
+    [InlineData("/api/v1/inventario/stock-bajo")]
+    [InlineData("/api/v1/inventario/movimientos?from=2026-10-01&to=2026-10-02")]
+    public async Task Catalog_reads_require_their_own_permission(string path)
+    {
+        using var f = new Factory(); await f.Seed(); using var c = f.Client();
+        Assert.Equal(HttpStatusCode.Unauthorized, (await c.GetAsync(path)).StatusCode);
+        var token = await Login(c); c.DefaultRequestHeaders.Authorization = new("Bearer", token.AccessToken);
+        Assert.Equal(HttpStatusCode.Forbidden, (await c.GetAsync(path)).StatusCode);
+    }
+    [Theory]
+    [InlineData("/api/v1/productos")]
+    [InlineData("/api/v1/categorias")]
+    [InlineData("/api/v1/subcategorias")]
+    [InlineData("/api/v1/proveedores")]
+    [InlineData("/api/v1/ubicaciones")]
+    [InlineData("/api/v1/inventario/entradas")]
+    [InlineData("/api/v1/inventario/salidas")]
+    [InlineData("/api/v1/inventario/ajustes")]
+    [InlineData("/api/v1/inventario/traslados")]
+    public async Task Catalog_writes_require_their_own_permission(string path)
+    {
+        using var f = new Factory(); await f.Seed(); using var c = f.Client();
+        var token = await Login(c); c.DefaultRequestHeaders.Authorization = new("Bearer", token.AccessToken);
+        Assert.Equal(HttpStatusCode.Forbidden, (await c.PostAsJsonAsync(path, new { })).StatusCode);
     }
 
     private sealed record TokenResponse(string AccessToken);

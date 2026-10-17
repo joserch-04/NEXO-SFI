@@ -32,3 +32,11 @@ Antes de aceptar cada fase: guardar escenario, versión, datos, resultado espera
 ## Revisión documental de esta entrega
 
 Verificar presencia de ≥15 RF (hay 25), RNF, ≥10 tablas relacionadas, ocho reportes, tres gráficos, endpoints, capas, Docker y decisiones abiertas. Revisar enlaces locales y consistencia de turno/venta/inventario. No se declaran compilación, pruebas funcionales o restauración exitosas.
+
+## Cobertura incorporada Fase 6
+
+Véase [[Verificación Fase 6]]: pruebas automatizadas de clasificación, productos/proveedores, ubicación múltiple, precisión, ajustes, idempotencia, no negativos, traslados atómicos, concurrencia, alertas y autorización. Pendientes: recorrido visual autenticado y medición LAN bajo carga. El detalle por ubicación se compara con saldos globales e historial mediante Verify.
+
+## Identidad del negocio
+
+[[Verificación identidad del negocio]] registra validaciones de nombre/lema, lectura autenticada, edición exclusiva de Administrador con permiso, HTTPS, versión obsoleta, persistencia MySQL y auditoría atómica. Incluye revisión visual con datos simulados. Pendientes: recorrido real en varias terminales LAN y propagación de una sesión ya abierta mediante recarga.

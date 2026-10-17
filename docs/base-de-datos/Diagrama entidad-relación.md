@@ -261,3 +261,7 @@ erDiagram
 ```
 
 La participación de un padre puede ser opcional cuando la FK admite NULL. Una FK no exige que existan hijos: los detalles y pagos obligatorios se validarán en la transacción del backend. `schema_migrations` es una tabla técnica independiente, con versión, checksum y fecha.
+
+## Actualización Fase 6
+
+Ver [[Fase 6]] para el diagrama de catálogo efectivo. Se agregaron subcategorías y ubicaciones jerárquicas; existencias_ubicacion relaciona cada producto con varias áreas/estantes. El saldo global existencias se conserva y se verifica contra el detalle. La migración 005 y sus claves compuestas son la fuente del esquema vigente.

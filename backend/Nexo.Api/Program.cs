@@ -7,8 +7,7 @@ using Nexo.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args.Where(a => a != "--bootstrap-admin").ToArray());
 #if DEBUG
-// Visual Studio también puede iniciar el ejecutable sin aplicar launchSettings.json.
-// En Debug permitimos recuperar el secreto local aunque no se establezca Development.
+
 if (string.IsNullOrWhiteSpace(builder.Configuration.GetConnectionString("MySql")))
 {
     builder.Configuration.AddUserSecrets<Program>(optional: true);
@@ -35,6 +34,8 @@ builder.Services.AddScoped<IDatabaseProbe>(services => new MySqlDatabaseProbe(
         .LogWarning("No se pudo conectar con MySQL. Código: {ErrorCode}", errorCode)));
 builder.Services.AddScoped<ReadinessService>();
 builder.AddSecurity();
+builder.AddCatalog();
+builder.AddBusinessProfile();
 builder.Services.AddOpenApi();
 builder.Services.AddProblemDetails(options => options.CustomizeProblemDetails = context =>
 {
@@ -74,6 +75,8 @@ app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapSecurity();
+app.MapCatalog();
+app.MapBusinessProfile();
 if (app.Environment.IsDevelopment()) app.MapOpenApi();
 var health = app.MapGroup("/api/v1/health").WithTags("Operación");
 health.MapGet("/live", () => TypedResults.Ok(new ReadinessResult("alive")))

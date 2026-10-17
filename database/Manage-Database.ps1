@@ -1,5 +1,5 @@
 param(
-    [ValidateSet('Migrate','Seed','Verify')][string]$Action = 'Verify'
+    [ValidateSet('Migrate','Seed','SeedCatalog','Verify')][string]$Action = 'Verify'
 )
 $ErrorActionPreference = 'Stop'
 Set-Location (Split-Path $PSScriptRoot -Parent)
@@ -71,11 +71,13 @@ DROP PROCEDURE nexo_migrate_$version;
     foreach ($table in $tables) {
         $table = $table.Trim()
         if ($table -notmatch '^[a-z_]+$') { throw 'Tabla no válida' }
-        $rights = if ($table -eq 'schema_migrations') { 'SELECT' } elseif ($table -in @('usuario_roles','rol_permisos')) { 'SELECT, INSERT, UPDATE, DELETE' } elseif ($table -in @('auditoria','movimientos_inventario')) { 'SELECT, INSERT' } else { 'SELECT, INSERT, UPDATE' }
+        $rights = if ($table -eq 'schema_migrations') { 'SELECT' } elseif ($table -in @('usuario_roles','rol_permisos','producto_proveedores')) { 'SELECT, INSERT, UPDATE, DELETE' } elseif ($table -in @('auditoria','movimientos_inventario')) { 'SELECT, INSERT' } else { 'SELECT, INSERT, UPDATE' }
         $grants += "GRANT $rights ON nexo.$table TO 'nexo_app'@'%';`n"
     }
     Invoke-Sql $grants | Out-Null
     Write-Host 'Migraciones aplicadas. DDL MySQL no es transaccional: no reintentar un fallo parcial sin inspección.'
+} elseif ($Action -eq 'SeedCatalog') {
+    Invoke-Sql (Get-Content "$PSScriptRoot/seeds/002_catalogo_demo.sql" -Raw) | Write-Host
 } elseif ($Action -eq 'Seed') {
     Invoke-Sql (Get-Content "$PSScriptRoot/seeds/001_demo.sql" -Raw) | Write-Host
 } else {

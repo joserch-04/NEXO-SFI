@@ -50,10 +50,16 @@ public sealed class MySqlSecurityStore(MySqlConnectionFactory factory) : ISecuri
             await db.ExecuteAsync(Q("DELETE FROM rol_permisos WHERE rol_id=@role", new { role }));
             foreach (var permission in permissions) await db.ExecuteAsync(Q("INSERT INTO rol_permisos VALUES(@role,@permission)", new { role, permission }));
         }
-        public Task<bool> FamilyActive(long user, string family) => db.ExecuteScalarAsync<bool>(Q("SELECT EXISTS(SELECT 1 FROM sesiones_refresh WHERE usuario_id=@user AND familia=@family AND revocado_en IS NULL AND expira_en>UTC_TIMESTAMP(6))", new { user, family }));
+        public async Task<bool> FamilyActive(long user, string family)
+        {
+            var active = await db.ExecuteScalarAsync<bool>(Q("SELECT EXISTS(SELECT 1 FROM sesiones_refresh WHERE usuario_id=@user AND familia=@family AND revocado_en IS NULL AND expira_en>UTC_TIMESTAMP(6) AND ultima_actividad>UTC_TIMESTAMP(6)-INTERVAL 5 MINUTE)", new { user, family }));
+            if (active) await db.ExecuteAsync(Q("UPDATE sesiones_refresh SET ultima_actividad=UTC_TIMESTAMP(6) WHERE usuario_id=@user AND familia=@family AND revocado_en IS NULL", new { user, family }));
+            else await RevokeFamily(family);
+            return active;
+        }
         public Task<int> AdminCount() => db.ExecuteScalarAsync<int>(Q("SELECT COUNT(DISTINCT u.id) FROM usuarios u JOIN usuario_roles ur ON ur.usuario_id=u.id JOIN roles r ON r.id=ur.rol_id WHERE u.activo=1 AND r.activo=1 AND r.nombre='Administrador'"));
-        public Task<RefreshSession?> Refresh(byte[] hash) => db.QuerySingleOrDefaultAsync<RefreshSession>(Q("SELECT id,usuario_id UserId,CAST(familia AS CHAR(100)) Family,hash,expira_en Expires,revocado_en Revoked FROM sesiones_refresh WHERE hash=@hash", new { hash }));
-        public Task<long> AddRefresh(long user, string family, byte[] hash, DateTime expires) => db.ExecuteScalarAsync<long>(Q("INSERT INTO sesiones_refresh(usuario_id,familia,hash,creado_en,expira_en) VALUES(@user,@family,@hash,UTC_TIMESTAMP(6),@expires); SELECT LAST_INSERT_ID();", new { user, family, hash, expires }));
+        public Task<RefreshSession?> Refresh(byte[] hash) => db.QuerySingleOrDefaultAsync<RefreshSession>(Q("SELECT id,usuario_id UserId,CAST(familia AS CHAR(100)) Family,hash,expira_en Expires,revocado_en Revoked,ultima_actividad LastActivity FROM sesiones_refresh WHERE hash=@hash", new { hash }));
+        public Task<long> AddRefresh(long user, string family, byte[] hash, DateTime expires) => db.ExecuteScalarAsync<long>(Q("INSERT INTO sesiones_refresh(usuario_id,familia,hash,creado_en,expira_en,ultima_actividad) VALUES(@user,@family,@hash,UTC_TIMESTAMP(6),@expires,UTC_TIMESTAMP(6)); SELECT LAST_INSERT_ID();", new { user, family, hash, expires }));
         public Task RevokeFamily(string family) => db.ExecuteAsync(Q("UPDATE sesiones_refresh SET revocado_en=COALESCE(revocado_en,UTC_TIMESTAMP(6)) WHERE familia=@family", new { family }));
         public Task RevokeUser(long user) => db.ExecuteAsync(Q("UPDATE sesiones_refresh SET revocado_en=COALESCE(revocado_en,UTC_TIMESTAMP(6)) WHERE usuario_id=@user", new { user }));
         public Task Rotate(long oldId, long newId) => db.ExecuteAsync(Q("UPDATE sesiones_refresh SET revocado_en=UTC_TIMESTAMP(6),reemplazo_id=@newId WHERE id=@oldId", new { oldId, newId }));

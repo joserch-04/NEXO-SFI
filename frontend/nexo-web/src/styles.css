@@ -52,3 +52,111 @@
   .pagination { @apply flex items-center justify-between gap-3 mt-6; }
   .startup { @apply max-w-xl mx-auto mt-20; }
 }
+
+@layer base {
+  select { @apply block w-full rounded-lg border border-[#b8c6bf] bg-white px-3 py-3 mt-2; }
+  select:focus-visible { @apply outline-2 outline-offset-4 outline-[#bd791c]; }
+}
+@layer components {
+  .catalog-grid { @apply grid xl:grid-cols-[1.5fr_1fr] gap-6; }
+  .form-grid { @apply grid md:grid-cols-2 xl:grid-cols-3 gap-x-5; }
+  .filters { @apply grid md:grid-cols-3 gap-4 items-end mb-6; }
+  .filters label { @apply mt-0; }
+  .filters button { @apply mt-0; }
+  .table-scroll { @apply overflow-x-auto mt-5; }
+  .table-scroll td { @apply pr-4; }
+  .table-scroll td button { @apply text-sm px-3 py-2 m-1; }
+  .check { @apply flex items-center gap-3; }
+  .check input { @apply w-auto mt-0; }
+}
+
+@layer components {
+  .inventory-heading { @apply flex flex-wrap justify-between items-center gap-4 mb-6; }
+  .inventory-heading h1 { @apply text-3xl mb-1; }
+  .inventory-heading p, .inventory-hint { @apply text-sm text-[#63756b]; }
+  .inventory-actions { @apply flex flex-wrap gap-2; }
+  .inventory-actions button { @apply text-sm px-4 py-2.5; }
+  .inventory-surface { @apply bg-white border border-[#dfe6dc] rounded-xl overflow-hidden; }
+  .inventory-tabs { @apply flex overflow-x-auto gap-1 border-b border-[#dfe6dc] px-4; }
+  .inventory-tabs button { @apply flex shrink-0 items-center gap-2 rounded-none border-b-2 border-transparent bg-transparent text-[#63756b] px-4 py-4 text-sm hover:bg-[#f4f7f3]; }
+  .inventory-tabs button[aria-pressed="true"] { @apply text-[#19634f] border-[#19634f]; }
+  .inventory-count { @apply rounded-full bg-[#edf1ed] px-2 py-0.5 text-xs; }
+  .inventory-count.has-alerts { @apply bg-[#fff0d6] text-[#825315]; }
+  .inventory-content { @apply p-4 md:p-6; }
+  .inventory-toolbar { @apply flex flex-wrap items-end gap-3 mb-6; }
+  .inventory-toolbar label { @apply mt-0 min-w-40 flex-1 text-sm; }
+  .inventory-toolbar label:first-child { @apply min-w-52; }
+  .inventory-toolbar input, .inventory-toolbar select { @apply py-2.5; }
+  .inventory-toolbar button { @apply w-auto mt-0 text-sm py-2.5; }
+  .inventory-list-caption { @apply flex flex-wrap justify-between items-center gap-2; }
+  .inventory-list-caption h2 { @apply text-base mb-0; }
+  .inventory-list-caption > span { @apply text-xs text-[#63756b]; }
+  .inventory-content .table-scroll { @apply mt-4; }
+  .inventory-content table { @apply min-w-[720px]; }
+  .inventory-content th { @apply pr-4; }
+  .inventory-content td { @apply text-sm py-3; }
+  .inventory-content td small { @apply text-xs text-[#63756b] mt-1; }
+  .inventory-quantity { @apply font-semibold tabular-nums; }
+  .inventory-status { @apply inline-block rounded-md bg-[#e7f0e7] text-[#315c42] px-2 py-1 text-xs whitespace-nowrap; }
+  .inventory-status.is-warning { @apply bg-[#fff2d9] text-[#805415]; }
+  .inventory-status.is-danger { @apply bg-[#fbe8e5] text-[#963f31]; }
+  .inventory-status.is-muted { @apply bg-[#edf0ec] text-[#647067]; }
+  .inventory-empty { @apply py-10 text-center text-sm text-[#63756b]; }
+  .inventory-success { @apply rounded-lg border border-[#bcd5bd] bg-[#e7f2e7] text-[#255c37] p-3 mb-4 text-sm; }
+  .inventory-filter-disclosure { @apply my-4 rounded-lg border border-[#dfe6dc]; }
+  .inventory-filter-disclosure summary { @apply cursor-pointer px-4 py-3 text-sm font-medium; }
+  .inventory-filter-disclosure form { @apply p-4 mb-0 border-t border-[#dfe6dc]; }
+  .inventory-panel { @apply fixed inset-y-0 right-0 left-auto m-0 h-dvh max-h-dvh w-full max-w-[520px] border-0 bg-white text-[#243c36] p-0 shadow-2xl; }
+  .inventory-panel::backdrop { background: rgb(18 42 35 / 38%); }
+  .inventory-panel-head { @apply sticky top-0 z-10 flex justify-between items-center gap-3 border-b border-[#dfe6dc] px-6 py-4 bg-white; }
+  .inventory-panel-head h2 { @apply mb-0 text-lg; }
+  .inventory-panel-head button { @apply px-3 py-2 text-sm; }
+  .inventory-panel-body { @apply px-6 pb-8 pt-2; }
+  .inventory-panel-body fieldset { @apply border-0 p-0 m-0 min-w-0; }
+  .inventory-panel-body label { @apply text-sm; }
+  .inventory-panel-body input, .inventory-panel-body select { @apply py-2.5; }
+  .inventory-panel-body .inventory-hint { @apply mt-5; }
+  .inventory-panel-actions { @apply flex flex-col gap-2 mt-6; }
+  .inventory-panel-actions button { @apply mt-0 text-sm; }
+  .inventory-panel-body .inventory-reset { @apply bg-transparent text-[#63756b] text-sm underline w-auto p-0 mt-5 hover:text-[#19634f]; }
+  .inventory-detail-name { @apply text-xl mt-5; }
+  .inventory-detail-summary { @apply grid grid-cols-2 gap-4 my-6; }
+  .inventory-detail-summary dt { @apply text-xs text-[#63756b]; }
+  .inventory-detail-summary dd { @apply text-lg font-semibold mt-1; }
+  .inventory-detail-move { @apply w-full mt-6 text-sm; }
+}
+body:has(.inventory-panel[open]) { overflow: hidden; }
+
+@layer components {
+  .business-sidebar-name { @apply text-2xl leading-tight font-semibold break-words; overflow-wrap: anywhere; }
+  .business-sidebar-powered { @apply text-xs text-[#b4cbc0] mt-2; }
+  .business-header-name { @apply font-semibold break-words min-w-0; overflow-wrap: anywhere; }
+  .business-home-name { overflow-wrap: anywhere; }
+  .business-home-tagline { @apply text-lg text-[#63756b] -mt-2 mb-5; overflow-wrap: anywhere; }
+  .business-home-powered { @apply mt-6 text-sm text-[#63756b]; }
+  .business-quick-links { @apply flex flex-wrap gap-3 mt-5; }
+  .settings-heading { @apply mb-6; }
+  .settings-heading h1 { @apply mb-2; }
+  .settings-heading p, .settings-muted { @apply text-sm text-[#63756b]; }
+  .business-settings-grid { @apply grid lg:grid-cols-[1.3fr_1fr] gap-6 items-start; }
+  .business-settings-fields { @apply border-0 p-0 m-0 min-w-0; }
+  .business-settings-fields small { @apply block text-xs text-[#63756b] mt-2; }
+  .business-preview { @apply text-center; }
+  .business-preview-mark { @apply w-16 h-16 rounded-2xl bg-[#dfeada] text-[#19634f] text-3xl font-semibold flex items-center justify-center mx-auto mb-5; }
+  .business-preview h2, .business-preview > p { overflow-wrap: anywhere; }
+  .business-preview h2 { @apply text-2xl; }
+  .business-powered { @apply border-t border-[#dfe6dc] pt-5 mt-6 mb-4 text-sm text-[#63756b]; }
+  .business-settings-success { @apply rounded-lg bg-[#e7f2e7] text-[#255c37] p-3 mt-5 text-sm; }
+}
+
+@layer components {
+  .business-sidebar-name { @apply flex items-center gap-3; }
+  .business-sidebar-name > span { @apply min-w-0; }
+  .business-sidebar-icon { @apply w-11 h-11 shrink-0 object-contain rounded-lg bg-white p-1; }
+  .business-header-name { @apply flex items-center gap-2; }
+  .business-header-icon { @apply w-8 h-8 shrink-0 object-contain; }
+  .business-home-icon { @apply w-20 h-20 object-contain mb-5; }
+  .business-preview-mark img { @apply w-full h-full object-contain p-1; }
+  .business-icon-editor input[type="file"] { @apply text-sm; }
+  .business-icon-editor .business-icon-remove { @apply w-auto text-sm py-2 mt-3; }
+}

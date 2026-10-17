@@ -83,3 +83,7 @@ El diagrama muestra relaciones centrales; la tabla enumera FK adicionales. Exist
 - Migraciones SQL futuras numeradas con versión/checksum en tabla técnica; sin EF. DDL MySQL requiere respaldo/recuperación, sin asumir rollback íntegro.
 
 No se incluyen clientes fiscales, lotes, vencimientos, múltiples almacenes, cuentas por pagar ni valoración contable sin aprobación. Los datos fiscales y su configuración se modelarán después de definir el alcance.
+
+## Evolución Fase 6
+
+La migración 005 añade subcategorías, ubicaciones jerárquicas y existencias por ubicación. Mantiene saldo global compatible y asigna saldos/historial anteriores a B-01. Productos incorporan costo, unidad, subcategoría, control de inventario y versión. Véanse [[Fase 6]] y su diagrama efectivo; el modelo inicial de ubicación única queda reemplazado para el módulo de catálogo.

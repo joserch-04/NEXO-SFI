@@ -32,6 +32,8 @@ public class MySqlSecurityTests
             Assert.NotNull(await service.Authenticate(id, session.User.Version, session.Family));
             var row = await db.Refresh(SecurityService.TokenHash(session.RefreshToken));
             Assert.NotNull(row); Assert.Null(row.Revoked);
+            Assert.True(row.LastActivity > DateTime.UtcNow.AddMinutes(-1));
+            Assert.InRange(row.Expires, DateTime.UtcNow.AddHours(7.99), DateTime.UtcNow.AddHours(8.01));
             var rotated = (await service.Refresh(session.RefreshToken))!;
             Assert.NotNull(rotated);
             Assert.Null(await service.Refresh(session.RefreshToken));

@@ -8,17 +8,18 @@ public sealed class GlobalExceptionHandler(IProblemDetailsService problems, ILog
     {
         // No registrar mensajes de excepciones que podrían contener SQL o credenciales.
         var expected = exception as Nexo.Application.SecurityError;
-        if (expected is null) logger.LogError("Error no controlado {ExceptionType}. TraceId: {TraceId}", exception.GetType().Name, context.TraceIdentifier);
-        context.Response.StatusCode = expected?.Status ?? 500;
+        var catalog = exception as Nexo.Domain.CatalogError;
+        if (expected is null && catalog is null) logger.LogError("Error no controlado {ExceptionType}. TraceId: {TraceId}", exception.GetType().Name, context.TraceIdentifier);
+        context.Response.StatusCode = expected?.Status ?? catalog?.Status ?? 500;
         await problems.WriteAsync(new ProblemDetailsContext
         {
             HttpContext = context,
             ProblemDetails = new ProblemDetails
             {
                 Status = context.Response.StatusCode,
-                Title = expected is null ? "Error interno" : "Solicitud rechazada",
-                Detail = expected is null ? "Ocurrió un error al procesar la solicitud." : "Revise los datos y permisos de la operación.",
-                Extensions = { ["code"] = expected?.Code ?? "internal_error" }
+                Title = expected is null && catalog is null ? "Error interno" : "Solicitud rechazada",
+                Detail = expected is null && catalog is null ? "Ocurrió un error al procesar la solicitud." : "Revise los datos y permisos de la operación.",
+                Extensions = { ["code"] = expected?.Code ?? catalog?.Code ?? "internal_error" }
             }
         });
         return true;

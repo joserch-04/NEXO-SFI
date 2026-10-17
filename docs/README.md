@@ -1,7 +1,11 @@
 # NEXO — documentación del proyecto
 
 
-## Fase actual: frontend base
+## Fase actual: catálogo e inventario
+
+Personalización del cliente: [[Identidad y configuración del negocio]] y [[Verificación identidad del negocio]]. NEXO es el software; el nombre de la tienda se administra desde Configuración.
+
+La Fase 6 incorpora categorías, subcategorías, proveedores, ubicaciones, productos, movimientos atómicos y alertas. Véanse [[Fase 6]], [[Manual catálogo e inventario]] y [[Verificación Fase 6]].
 
 La Fase 5 incorpora React/TypeScript, Tailwind, rutas protegidas, formularios y cliente de sesión. Véanse [[Fase 5]] y [[Verificación Fase 5]] para instalación, funcionamiento y límites de verificación.
 
@@ -10,6 +14,8 @@ Configuración aplicada de certificados, VS Code y Visual Studio 2026: [[Ejecuci
 Alta/edición de cuentas de cajeros y consulta, roles y permisos: [[Administración de usuarios frontend]].
 
 Cambios de contraseña exclusivos del administrador: [[Política de contraseñas]].
+
+Política vigente de acceso en cajas: [[Sesiones en terminales compartidas]] y [[Verificación sesiones compartidas]]. Sustituye la restauración automática y las cookies persistentes de siete días descritas en las notas históricas.
 
 La Fase 4 implementa sesión JWT, refresh revocable, usuarios, roles y políticas. Véanse [[Fase 4]] y [[Verificación Fase 4]]. La Fase 3 incorpora la solución ASP.NET Core 10, capas, conexión Dapper/MySQL, errores, OpenAPI y pruebas iniciales. Véanse [[Fase 3]] y [[Verificación Fase 3]]. La solicitud de Fase 2 autorizó implementar el modelo preliminar. Ya existen SQL, semillas y Compose; las notas de Fase 1 siguientes conservan el contexto del diseño. El archivo real de instrucciones actual es `AGENTS.md`.
 

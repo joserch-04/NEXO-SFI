@@ -40,3 +40,7 @@ Aprobar o corregir arquitectura, alcance y modelo preliminar, y resolver priorit
 
 Sin política fiscal no se pueden cerrar fórmulas ni formato de factura. Sin reglas de devolución no se puede cerrar conciliación. La restauración desde interfaz exige mantenimiento y un ejecutor separado para no depender de la base que se reemplaza. La disponibilidad depende de energía/LAN y de respaldos recuperables; no se propone alta disponibilidad. No se consultaron fuentes externas ni se validaron versiones instaladas porque la etapa documenta el stack prescrito, no instrucciones de instalación ni afirmaciones legales.
 
+
+## Actualización aprobada en Fase 6
+
+La solicitud expresa de catálogo e inventario autoriza múltiples ubicaciones y estantes, y cantidades de hasta tres decimales. D01 queda actualizado a una tienda con varias ubicaciones y moneda NIO; D04 utiliza la precisión existente del esquema. El diseño efectivo se describe en [[Fase 6]]. D02–D08, en lo relativo a fiscalidad, ventas y caja, no se consideran resueltos por esta fase. El texto histórico anterior conserva el contexto original.

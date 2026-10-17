@@ -69,3 +69,11 @@ Identificadores permitidos: inventario-actual, movimientos-inventario, ventas-pe
 ## Restauración y operación
 
 No aceptar comandos, rutas del sistema ni nombres SQL del cliente. Solo respaldos generados o importados mediante validación futura explícita; la versión inicial propone restaurar respaldos propios. La restauración usa un ejecutor administrativo separado del proceso que atiende ventas, activa mantenimiento, impide nuevas escrituras, cierra conexiones y exige respaldo previo. Estado/log operacional fuera de la BD a restaurar; finalizar revocando sesiones. El mecanismo concreto pertenece a Fase 9 y requiere ensayo antes de habilitar la interfaz.
+
+## Contrato efectivo Fase 6
+
+Las rutas de catálogo e inventario ya están implementadas; véase [[Fase 6]] para contratos, filtros y permisos definitivos. Incluye `/subcategorias`, `/ubicaciones` y `/inventario/traslados`. La clave idempotente se envía en el campo JSON `key` UUID para movimientos. Los maestros usan `version` explícita y responden 409 si quedó obsoleta, en lugar del ETag/412 inicialmente propuesto. Los ajustes aplican diferencias con signo. La interfaz y API de ventas siguen pendientes de Fase 7.
+
+## Configuración de identidad del negocio
+
+GET `/api/v1/configuracion/negocio`: sesión autenticada; PUT en la misma ruta: Administrador y configuracion.administrar. HTTPS y no-store. JSON name, tagline, version; PUT devuelve perfil normalizado y versión incrementada. 400 entrada inválida; 409 versión antigua. Véase [[Identidad y configuración del negocio]].

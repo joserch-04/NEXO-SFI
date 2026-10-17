@@ -1,5 +1,7 @@
 # Fase 5 — Frontend base
 
+> Actualización del 16/10/2026: [[Sesiones en terminales compartidas]] sustituye la restauración automática y el cierre local condicionado al éxito de logout descritos en esta nota histórica. Abrir/recargar exige login; la terminal se bloquea tras cinco minutos incluso si falla la red. Evidencia actual: [[Verificación sesiones compartidas]].
+
 15 de octubre de 2026. Relacionado: [[Fase 4]], [[API REST]], [[Verificación Fase 5]].
 
 ## Objetivo y tecnologías

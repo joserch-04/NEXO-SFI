@@ -2,12 +2,16 @@
 -- Una segunda ejecución falla por PK; la transacción conserva el dataset original.
 SET time_zone='+00:00';
 START TRANSACTION;
-INSERT INTO roles(id,nombre) VALUES(1,'Administrador'),(2,'Vendedor/Cajero'),(3,'Consulta');
-INSERT INTO permisos(id,codigo,descripcion) VALUES
- (1,'catalogo.leer','Consultar catálogo'),(2,'ventas.crear','Registrar venta'),
- (3,'reportes.leer','Consultar reportes');
--- Matriz ilustrativa, no autoriza endpoints; completar en Fase 4.
-INSERT INTO rol_permisos VALUES(1,1),(1,2),(1,3),(2,1),(2,2),(3,1),(3,3);
+INSERT IGNORE INTO roles(id,nombre) VALUES(1,'Administrador'),(2,'Vendedor/Cajero'),(3,'Consulta');
+INSERT IGNORE INTO permisos(codigo,descripcion) VALUES
+ ('catalogo.leer','Consultar catálogo'),('ventas.crear','Registrar venta'),
+ ('reportes.leer','Consultar reportes');
+-- Resolver por código: las migraciones de seguridad ya pueden haber creado permisos.
+INSERT IGNORE INTO rol_permisos(rol_id,permiso_id)
+ SELECT r.id,p.id FROM roles r CROSS JOIN permisos p
+ WHERE (r.nombre='Administrador' AND p.codigo IN ('catalogo.leer','ventas.crear','reportes.leer'))
+ OR (r.nombre='Vendedor/Cajero' AND p.codigo IN ('catalogo.leer','ventas.crear'))
+ OR (r.nombre='Consulta' AND p.codigo IN ('catalogo.leer','reportes.leer'));
 INSERT INTO usuarios(id,nombre_usuario,nombre,password_hash,activo) VALUES
  (1,'demo.admin','Administrador de prueba','',FALSE),
  (2,'demo.cajero1','Cajero uno de prueba','',FALSE),
@@ -31,7 +35,7 @@ INSERT INTO ventas VALUES(1,1,1,2,'2026-10-14 15:00:00','CONFIRMADA',50,0,0,50);
 INSERT INTO detalle_ventas VALUES(1,1,1,'AGUA-01','Agua demo',2,25,0,50,0,0,50);
 INSERT INTO pagos VALUES(1,1,'EFECTIVO',50,100,50);
 INSERT INTO facturas VALUES(1,1,'DEMO',1,'2026-10-14 15:00:00','ACADEMICO','NEXO DEMO - SIN VALIDEZ FISCAL');
-INSERT INTO operaciones_inventario VALUES(1,'ENTRADA','Carga inicial demo',1,'DEMO-001',1,'2026-10-14 14:00:00');
+INSERT INTO operaciones_inventario(id,tipo,motivo,proveedor_id,referencia,usuario_id,creado_en) VALUES(1,'ENTRADA','Carga inicial demo',1,'DEMO-001',1,'2026-10-14 14:00:00');
 INSERT INTO movimientos_inventario(id,producto_id,delta,costo_unitario,operacion_id,tipo,usuario_id,creado_en) VALUES
  (1,1,12,15,1,'MANUAL',1,'2026-10-14 14:00:00'),
  (2,2,1,20,1,'MANUAL',1,'2026-10-14 14:00:00'),
@@ -39,6 +43,8 @@ INSERT INTO movimientos_inventario(id,producto_id,delta,costo_unitario,operacion
 INSERT INTO movimientos_inventario(id,producto_id,delta,detalle_venta_id,tipo,usuario_id,creado_en)
  VALUES(4,1,-2,1,'VENTA',2,'2026-10-14 15:00:00');
 INSERT INTO existencias VALUES(1,10),(2,1),(3,0),(4,5);
+INSERT INTO existencias_ubicacion SELECT producto_id,(SELECT id FROM ubicaciones WHERE codigo='B-01'),cantidad FROM existencias;
+UPDATE movimientos_inventario SET ubicacion_id=(SELECT id FROM ubicaciones WHERE codigo='B-01') WHERE ubicacion_id IS NULL;
 INSERT INTO operaciones_idempotentes VALUES(1,2,'VENTA','demo-venta-001',UNHEX(SHA2('demo-venta-001',256)),1,201,'2026-10-14 15:00:00');
 INSERT INTO auditoria VALUES(1,1,'CARGA_DEMO','dataset',NULL,'2026-10-15 00:00:00','EXITO','00000000-0000-4000-8000-000000000001','Datos sintéticos, usuarios deshabilitados');
 COMMIT;

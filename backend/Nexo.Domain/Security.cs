@@ -3,7 +3,7 @@ namespace Nexo.Domain;
 public sealed record SecurityUser(long Id, string Username, string Name, string PasswordHash, bool Active, uint Version) { public SecurityUser() : this(0, "", "", "", false, 0) { } }
 public sealed record SecurityRole(long Id, string Name, bool Active) { public SecurityRole() : this(0, "", false) { } }
 public sealed record Permission(long Id, string Code, string Description) { public Permission() : this(0, "", "") { } }
-public sealed record RefreshSession(long Id, long UserId, string Family, byte[] Hash, DateTime Expires, DateTime? Revoked) { public RefreshSession() : this(0, 0, "", [], default, null) { } }
+public sealed record RefreshSession(long Id, long UserId, string Family, byte[] Hash, DateTime Expires, DateTime? Revoked, DateTime LastActivity = default) { public RefreshSession() : this(0, 0, "", [], default, null, default) { } }
 public interface ISecurityStore
 {
     Task<T> Execute<T>(Func<ISecuritySession, Task<T>> action, CancellationToken ct = default);

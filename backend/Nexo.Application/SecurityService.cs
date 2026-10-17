@@ -52,7 +52,7 @@ public sealed class SecurityService(ISecurityStore store, IPasswordHasher<Securi
     private static async Task<SessionResult> NewSession(ISecuritySession db, SecurityUser u, string? family = null, DateTime? expires = null, long? old = null)
     {
         var token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(48));
-        var until = expires ?? DateTime.UtcNow.AddDays(7);
+        var until = expires ?? DateTime.UtcNow.AddHours(8);
         family ??= Guid.NewGuid().ToString();
         var id = await db.AddRefresh(u.Id, family, TokenHash(token), until);
         if (old.HasValue) await db.Rotate(old.Value, id);
@@ -74,7 +74,8 @@ public sealed class SecurityService(ISecurityStore store, IPasswordHasher<Securi
         if (s is null) return null;
         if (s.Revoked.HasValue) { await db.RevokeFamily(s.Family); return null; }
         var u = await db.User(s.UserId);
-        if (s.Expires <= DateTime.UtcNow || u is null || !u.Active) return null;
+        if (s.Expires <= DateTime.UtcNow || s.LastActivity <= DateTime.UtcNow.AddMinutes(-5) || u is null || !u.Active)
+        { await db.RevokeFamily(s.Family); return null; }
         return await NewSession(db, u, s.Family, s.Expires, s.Id);
     });
     public Task<bool> Logout(string token) => store.Execute(async db =>
