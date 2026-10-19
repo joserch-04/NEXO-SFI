@@ -1,0 +1,29 @@
+# Uso opcional con un proxy HTTPS local. El proxy debe conservar HTTPS mediante
+# terminación TLS en Kestrel (certificado montado y configuración de endpoints).
+services:
+  api:
+    build:
+      context: .
+      dockerfile: backend/Nexo.Api/Dockerfile
+    restart: unless-stopped
+    environment:
+      ConnectionStrings__MySql: Server=mysql;Database=nexo;User ID=nexo_app;Password=${MYSQL_PASSWORD};SslMode=Preferred
+      Jwt__SigningKey: ${JWT_SIGNING_KEY:?Defina JWT_SIGNING_KEY}
+      Jwt__Issuer: Nexo
+      Jwt__Audience: Nexo.Web
+      Storage__ProductImages: /data/product-images
+      ASPNETCORE_Kestrel__Endpoints__Https__Url: https://+:8443
+      ASPNETCORE_Kestrel__Endpoints__Https__Certificate__Path: /certs/nexo.pfx
+      ASPNETCORE_Kestrel__Endpoints__Https__Certificate__Password: ${NEXO_CERT_PASSWORD:?Defina NEXO_CERT_PASSWORD}
+      Cors__AllowedOrigins__0: ${NEXO_WEB_ORIGIN:?Defina NEXO_WEB_ORIGIN}
+      AllowedHosts: ${NEXO_API_ALLOWED_HOSTS:-localhost;127.0.0.1}
+    ports:
+      - "${NEXO_API_BIND:-127.0.0.1}:7080:8443"
+    volumes:
+      - product_images:/data/product-images
+      - ./.certs:/certs:ro
+    depends_on:
+      mysql:
+        condition: service_healthy
+volumes:
+  product_images:

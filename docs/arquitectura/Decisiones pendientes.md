@@ -44,3 +44,7 @@ Sin política fiscal no se pueden cerrar fórmulas ni formato de factura. Sin re
 ## Actualización aprobada en Fase 6
 
 La solicitud expresa de catálogo e inventario autoriza múltiples ubicaciones y estantes, y cantidades de hasta tres decimales. D01 queda actualizado a una tienda con varias ubicaciones y moneda NIO; D04 utiliza la precisión existente del esquema. El diseño efectivo se describe en [[Fase 6]]. D02–D08, en lo relativo a fiscalidad, ventas y caja, no se consideran resueltos por esta fase. El texto histórico anterior conserva el contexto original.
+
+## Alcance concretado en Fase 7
+
+[[Fase 7]] documenta el flujo interno implementado. Moneda NIO; comprobante interno ACADEMICO con serie INT; tasa inicial cero hasta aprobación del tratamiento tributario. No se presume validez fiscal ni reembolso automático de tarjeta/transferencia. La configuración actual admite una tasa general sobre precio neto. Aprobación fiscal, exenciones y reglas específicas del negocio siguen pendientes antes de declarar facturación legal.

@@ -6,6 +6,21 @@ export class ApiError extends Error {
   constructor(public status: number, public code: string, public traceId?: string) { super(messages[code] ?? messages[`http_${status}`] ?? 'No se pudo completar la operación. Inténtalo nuevamente.'); }
 }
 const messages: Record<string, string> = {
+  payment_reference_required: 'Ingresá la referencia de cada pago con tarjeta o transferencia.',
+  invalid_payment_reference: 'La referencia admite hasta 100 caracteres: letras, números, espacios, guiones, punto, barra o dos puntos. No ingresés datos de tarjeta.',
+  cash_reference_not_allowed: 'El pago en efectivo no lleva referencia bancaria.',
+  invalid_pos: 'Revisá cantidades, importes, descuentos y datos de la operación.',
+  register_unavailable: 'La caja está inactiva o fuera de servicio.', register_open: 'La caja ya tiene un turno abierto.',
+  register_not_found: 'La caja no existe.', user_shift_open: 'Ya tenés un turno abierto. Cerralo antes de abrir otro.',
+  shift_not_found: 'El turno no existe.', shift_closed: 'El turno ya está cerrado; no admite esta operación.',
+  shift_owner: 'Esta operación requiere un turno abierto a tu nombre.', sale_owner: 'No tenés permiso para consultar esta venta.',
+  product_unavailable: 'Uno de los productos ya no está activo.', discount_forbidden: 'No tenés permiso para aplicar descuentos.',
+  payment_incomplete: 'Los pagos recibidos no cubren el total.', invalid_change: 'El exceso debe corresponder al efectivo recibido; revisá los pagos.',
+  cash_insufficient: 'El efectivo esperado de tu turno no alcanza para esta salida o devolución.',
+  sale_already_void: 'Esta venta ya fue anulada; no se volvió a restituir inventario ni efectivo.',
+  sale_has_returns: 'La venta tiene devoluciones previas y requiere revisión antes de anularse.',
+  sale_not_found: 'La venta no existe.', pos_conflict: 'La operación entra en conflicto con el estado actual. Recargá los datos.',
+  transaction_retry: 'Otra operación mantiene los datos ocupados. Reintentá con los mismos datos.',
   invalid_business_icon: 'El icono no es válido. Elige nuevamente una imagen PNG, JPG o WebP de hasta 2 MB.',
   invalid_business_profile: 'Escribe un nombre de tienda de hasta 120 caracteres y un lema de hasta 160, sin saltos de línea.',
   invalid_catalog: 'Revisa los datos, relaciones activas, cantidades y fechas del catálogo.',
@@ -60,6 +75,7 @@ export class ApiClient {
       const problem = await response.json().catch(() => ({}));
       throw new ApiError(response.status, problem.code ?? `http_${response.status}`, problem.traceId);
     }
+    if (response.headers.get('Content-Type')?.startsWith('image/')) return await response.blob() as T;
     return response.status === 204 ? undefined as T : response.json();
   }
   refresh(): Promise<void> {

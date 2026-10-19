@@ -36,6 +36,7 @@ builder.Services.AddScoped<ReadinessService>();
 builder.AddSecurity();
 builder.AddCatalog();
 builder.AddBusinessProfile();
+builder.AddPos();
 builder.Services.AddOpenApi();
 builder.Services.AddProblemDetails(options => options.CustomizeProblemDetails = context =>
 {
@@ -77,6 +78,7 @@ app.UseAuthorization();
 app.MapSecurity();
 app.MapCatalog();
 app.MapBusinessProfile();
+app.MapPos();
 if (app.Environment.IsDevelopment()) app.MapOpenApi();
 var health = app.MapGroup("/api/v1/health").WithTags("Operación");
 health.MapGet("/live", () => TypedResults.Ok(new ReadinessResult("alive")))

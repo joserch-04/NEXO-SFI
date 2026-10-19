@@ -1,7 +1,9 @@
 # NEXO — documentación del proyecto
 
 
-## Fase actual: catálogo e inventario
+## Fase actual: punto de venta y caja
+
+La Fase 7 integra imágenes de productos, cajas, turnos, POS, ventas, pagos combinados, comprobantes internos, anulaciones y arqueos. Véanse [[Fase 7]], [[Requisitos POS y caja]], [[Modelo POS y caja]], [[Manual POS y caja]] y [[Verificación Fase 7]].
 
 Personalización del cliente: [[Identidad y configuración del negocio]] y [[Verificación identidad del negocio]]. NEXO es el software; el nombre de la tienda se administra desde Configuración.
 
@@ -51,3 +53,7 @@ Solo se producen notas Markdown en `docs/`. No existe código cuyo funcionamient
 ## Verificación e incidencias históricas de Fase 1
 
 Se leyó el archivo de instrucciones y se inspeccionó el árbol existente. La búsqueda inicial de `AGENTS.md` falló porque el archivo real se llama `AGENTS.md.md`; se localizó y leyó sin renombrarlo. La revisión documental verifica cobertura del alcance y coherencia entre notas; no equivale a pruebas funcionales, ejecución SQL, validación de Docker ni compilación. Estas permanecen pendientes.
+
+Ampliación de cobros de Fase 7: [[Referencias de pagos]] explica el registro manual obligatorio de referencia de tarjeta/transferencia y su relación con terminales NFC de producción.
+
+Organización actual de la interfaz: [[Navegación por secciones]] — POS independiente, caja e historial derivados y menú agrupado.

@@ -1,6 +1,6 @@
 # NEXO
 
-Inventario y facturación académica para tienda de conveniencia. Fase actual: catálogo e inventario sobre React/TypeScript y ASP.NET Core 10.
+Inventario y facturación académica para tienda de conveniencia. Fase actual: punto de venta y gestión de caja sobre React/TypeScript y ASP.NET Core 10.
 
 La documentación en español está en [docs/README.md](docs/README.md). Instrucciones de instalación y resultados reales: [Fase 2](docs/base-de-datos/Fase%202.md).
 
@@ -44,10 +44,23 @@ Instalación, certificados y ejecución: [Fase 5](docs/arquitectura/Fase%205.md)
 
 Productos, categorías/subcategorías, proveedores, ubicaciones jerárquicas, stock por ubicación, movimientos atómicos e idempotentes y alertas. Migración `005_catalogo_inventario.sql`. Carga opcional de 55 productos ficticios: `pwsh -NoProfile -File database/Manage-Database.ps1 SeedCatalog` (una vez, después de Migrate y con un usuario existente).
 
-Guía: [Fase 6](docs/arquitectura/Fase%206.md), [manual](docs/arquitectura/Manual%20catálogo%20e%20inventario.md), [verificación](docs/pruebas/Verificación%20Fase%206.md). Reiniciar/recompilar la API del IDE para cargar el módulo. Ventas y comprobantes siguen en Fase 7.
+Guía: [Fase 6](docs/arquitectura/Fase%206.md), [manual](docs/arquitectura/Manual%20catálogo%20e%20inventario.md), [verificación](docs/pruebas/Verificación%20Fase%206.md). Reiniciar/recompilar la API del IDE para cargar el módulo. Ventas y comprobantes se integran en la Fase 7 documentada a continuación.
 
 ## Identidad del negocio
 
 Nombre comercial y lema opcional desde Configuración (Administrador). La identidad se muestra dentro de la sesión; NEXO se conserva como marca del software. Aplicar migración 006 y reiniciar la API. Guía: [Identidad y configuración del negocio](docs/arquitectura/Identidad%20y%20configuración%20del%20negocio.md).
 
 El perfil del negocio admite también un icono de imagen: selector PNG/JPG/WebP con vista previa, normalización y validación del servidor. Migración 007. Véase [Identidad y configuración del negocio](docs/arquitectura/Identidad%20y%20configuración%20del%20negocio.md).
+
+## Punto de venta y caja (Fase 7)
+
+POS con imágenes, cajas/turnos propios, pagos combinados, comprobantes internos térmicos/A4, anulaciones trazables y arqueos. Aplicar migración 008 con `pwsh -NoProfile -File database/Manage-Database.ps1 Migrate` y reiniciar/recompilar la API. Volver a iniciar sesión para cargar permisos.
+
+Guía técnica: [Fase 7](docs/arquitectura/Fase%207.md). Operación: [Manual POS y caja](docs/arquitectura/Manual%20POS%20y%20caja.md). Modelo: [Modelo POS y caja](docs/base-de-datos/Modelo%20POS%20y%20caja.md). Evidencia: [Verificación Fase 7](docs/pruebas/Verificación%20Fase%207.md).
+
+Pruebas con base temporal aislada (Docker local): `pwsh -NoProfile -File database/Test-Phase7.ps1`. El script instala migraciones y semillas en una base aleatoria y elimina solo esa base al finalizar. No ejecutar semillas sobre la instalación existente.
+
+Las fotos se guardan en `App_Data/product-images`, o en `Storage:ProductImages`. Para API en contenedor se prepara `compose.api.yaml` con volumen `product_images`; consultar certificados y variables en la guía. El volumen y MySQL deben incluirse en los respaldos.
+
+Los comprobantes tienen tipo interno sin validez fiscal. Tarjeta/transferencia son registros de cobros gestionados externamente; una anulación no ejecuta un reembolso bancario.
+Ampliación de Fase 7: referencia obligatoria en tarjeta/transferencia (migración 009). Terminal NFC independiente simulada y referencia visible en consulta/reimpresión; no se realizan cobros bancarios. Véase [Referencias de pagos](docs/arquitectura/Referencias%20de%20pagos.md).

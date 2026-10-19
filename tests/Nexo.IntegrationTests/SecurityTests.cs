@@ -243,6 +243,13 @@ public class SecurityTests
 
     [Theory]
     [InlineData("/api/v1/productos")]
+    [InlineData("/api/v1/cajas")]
+    [InlineData("/api/v1/turnos")]
+    [InlineData("/api/v1/turnos/1/arqueo")]
+    [InlineData("/api/v1/ventas")]
+    [InlineData("/api/v1/ventas/1/comprobante")]
+    [InlineData("/api/v1/productos/1/imagen")]
+    [InlineData("/api/v1/pos/configuracion")]
     [InlineData("/api/v1/categorias")]
     [InlineData("/api/v1/subcategorias")]
     [InlineData("/api/v1/proveedores")]
@@ -272,6 +279,30 @@ public class SecurityTests
         using var f = new Factory(); await f.Seed(); using var c = f.Client();
         var token = await Login(c); c.DefaultRequestHeaders.Authorization = new("Bearer", token.AccessToken);
         Assert.Equal(HttpStatusCode.Forbidden, (await c.PostAsJsonAsync(path, new { })).StatusCode);
+    }
+
+    [Theory]
+    [InlineData("/api/v1/cajas")]
+    [InlineData("/api/v1/turnos")]
+    [InlineData("/api/v1/turnos/1/cierre")]
+    [InlineData("/api/v1/turnos/1/movimientos")]
+    [InlineData("/api/v1/ventas")]
+    [InlineData("/api/v1/ventas/1/anulacion")]
+    public async Task Pos_mutations_require_specific_permissions(string path)
+    {
+        using var f = new Factory(); await f.Seed(); using var c = f.Client();
+        Assert.Equal(HttpStatusCode.Unauthorized, (await c.PostAsJsonAsync(path, new { })).StatusCode);
+        var token = await Login(c); c.DefaultRequestHeaders.Authorization = new("Bearer", token.AccessToken);
+        Assert.Equal(HttpStatusCode.Forbidden, (await c.PostAsJsonAsync(path, new { })).StatusCode);
+    }
+    [Theory]
+    [InlineData("/api/v1/productos/1/imagen")]
+    [InlineData("/api/v1/cajas/1")]
+    public async Task Pos_put_requires_specific_permission(string path)
+    {
+        using var f = new Factory(); await f.Seed(); using var c = f.Client();
+        var token = await Login(c); c.DefaultRequestHeaders.Authorization = new("Bearer", token.AccessToken);
+        Assert.Equal(HttpStatusCode.Forbidden, (await c.PutAsJsonAsync(path,new {})).StatusCode);
     }
 
     private sealed record TokenResponse(string AccessToken);

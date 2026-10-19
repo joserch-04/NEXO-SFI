@@ -31,10 +31,10 @@ INSERT INTO turnos_caja(id,caja_id,usuario_id,apertura_en,cierre_en,fondo_inicia
  (1,1,2,'2026-10-14 14:00:00','2026-10-14 22:00:00',100,150,150,'CERRADO'),
  (2,2,3,'2026-10-15 14:00:00',NULL,100,NULL,NULL,'ABIERTO');
 -- Importes ilustrativos con impuesto/descuento cero, sin política fiscal implícita.
-INSERT INTO ventas VALUES(1,1,1,2,'2026-10-14 15:00:00','CONFIRMADA',50,0,0,50);
-INSERT INTO detalle_ventas VALUES(1,1,1,'AGUA-01','Agua demo',2,25,0,50,0,0,50);
-INSERT INTO pagos VALUES(1,1,'EFECTIVO',50,100,50);
-INSERT INTO facturas VALUES(1,1,'DEMO',1,'2026-10-14 15:00:00','ACADEMICO','NEXO DEMO - SIN VALIDEZ FISCAL');
+INSERT INTO ventas(id,turno_id,caja_id,usuario_id,fecha,estado,subtotal,descuento,impuesto,total) VALUES(1,1,1,2,'2026-10-14 15:00:00','CONFIRMADA',50,0,0,50);
+INSERT INTO detalle_ventas(id,venta_id,producto_id,sku_snapshot,nombre_snapshot,cantidad,precio_unitario,tasa_impuesto,subtotal,descuento,impuesto,total) VALUES(1,1,1,'AGUA-01','Agua demo',2,25,0,50,0,0,50);
+INSERT INTO pagos(id,venta_id,metodo,importe_aplicado,recibido,cambio) VALUES(1,1,'EFECTIVO',50,100,50);
+INSERT INTO facturas VALUES(1,1,'DEMO',1,'2026-10-14 15:00:00','ACADEMICO','NEXO DEMO - COMPROBANTE DE VENTA');
 INSERT INTO operaciones_inventario(id,tipo,motivo,proveedor_id,referencia,usuario_id,creado_en) VALUES(1,'ENTRADA','Carga inicial demo',1,'DEMO-001',1,'2026-10-14 14:00:00');
 INSERT INTO movimientos_inventario(id,producto_id,delta,costo_unitario,operacion_id,tipo,usuario_id,creado_en) VALUES
  (1,1,12,15,1,'MANUAL',1,'2026-10-14 14:00:00'),

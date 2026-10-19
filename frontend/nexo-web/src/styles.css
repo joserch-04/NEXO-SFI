@@ -160,3 +160,91 @@ body:has(.inventory-panel[open]) { overflow: hidden; }
   .business-icon-editor input[type="file"] { @apply text-sm; }
   .business-icon-editor .business-icon-remove { @apply w-auto text-sm py-2 mt-3; }
 }
+/* Fase 7: catálogo visual, carrito y comprobantes. */
+fieldset { min-width: 0; border: 0; padding: 0; margin: 0; }
+.product-photo { width: 64px; height: 64px; object-fit: contain; border-radius: 12px; background: #f3f6f5; }
+.product-placeholder { display: flex; align-items: center; justify-content: center; color: #90aaa0; font-size: 32px; }
+.pos-tabs { display:flex; gap:10px; flex-wrap:wrap; margin:16px 0 24px; }
+.pos-shift { display:flex; gap:12px; justify-content:space-between; padding:14px 18px; background:#e8f5ed; color:#185738; border-radius:12px; margin-bottom:18px; }
+.pos-grid { display:grid; grid-template-columns:minmax(0, 1.7fr) minmax(310px, 1fr); gap:24px; align-items:start; }
+.pos-products { display:grid; grid-template-columns:repeat(auto-fill,minmax(145px,1fr)); gap:12px; margin-top:20px; }
+button.pos-product { display:flex; flex-direction:column; align-items:flex-start; gap:8px; padding:14px; color:#163b30; background:white; border:1px solid #dce7e0; border-radius:15px; text-align:left; min-height:230px; }
+button.pos-product:hover { background:#f0f9f4; border-color:#229561; }
+button.pos-product .product-photo { width:100%; height:100px; object-fit:cover; object-position:center; }
+button.pos-product .badge { font-size:11px; white-space:normal; }
+.pos-cart { position:sticky; top:18px; }
+.cart-line { padding:14px 0; border-bottom:1px solid #e0e8e3; }
+.cart-line>strong,.cart-line>small { display:block; }
+.cart-quantity { display:flex; gap:6px; align-items:center; margin-top:10px; }
+.cart-quantity input { width:85px; margin:0; }
+.cart-quantity button { padding:8px 10px; margin:0; }
+.pos-totals { display:grid; grid-template-columns:1fr auto; gap:8px; margin:20px 0; }
+.pos-totals dd { text-align:right; margin:0; }
+.total-row { display:contents; }
+.pos-charge { width:100%; padding:16px; margin:12px 0; font-size:18px; }
+.register-list>div { display:flex; align-items:center; flex-wrap:wrap; gap:12px; padding:14px 0; border-bottom:1px solid #e0e8e3; }
+/* El margen explícito centra el dialog frente al reset de Tailwind. */
+.receipt-dialog { position:fixed; inset:0; margin:auto; width:min(760px,calc(100vw - 32px)); max-width:none; max-height:calc(100dvh - 48px); padding:0; border:1px solid #dce7e0; border-radius:22px; color:#163b30; background:#fff; box-shadow:0 24px 80px #102d3640; overflow:hidden; }
+.receipt-dialog[open] { display:flex; flex-direction:column; }
+.receipt-dialog::backdrop { background:rgb(12 35 29 / 55%); backdrop-filter:blur(4px); }
+body:has(.receipt-dialog[open]) { overflow:hidden; }
+.receipt-header { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:22px 28px; background:#f6f9f7; border-bottom:1px solid #e4ebe6; flex-shrink:0; }
+.receipt-header .eyebrow { margin:0 0 5px; font-size:10px; letter-spacing:.15em; color:#647b70; }
+.receipt-header h2 { margin:0; font-size:20px; }
+button.receipt-close { display:flex; align-items:center; justify-content:center; flex-shrink:0; width:40px; height:40px; padding:0; margin:0; border:1px solid #dce7e0; border-radius:50%; background:#fff; color:#385c4e; }
+button.receipt-close:hover { background:#e7f0ea; color:#133c2c; }
+.receipt-close:focus-visible { outline:3px solid #bd791c; outline-offset:3px; }
+.receipt-body { min-height:0; overflow-y:auto; overscroll-behavior:contain; padding:24px 28px; }
+.receipt-loading { padding:24px 0; color:#647b70; }
+.receipt-dialog .print-document { padding:0; font-size:14px; }
+.receipt-business { text-align:center; padding:0 0 20px; border-bottom:1px dashed #cfdcd3; }
+.receipt-business h2 { font-size:28px; margin:0 0 6px; letter-spacing:-.03em; }
+.receipt-business p { color:#63786c; font-size:12px; line-height:1.6; overflow-wrap:anywhere; }
+.receipt-business .receipt-kind { margin:16px 0 8px; color:#566e60; font-size:10px; letter-spacing:.08em; }
+.receipt-business h3 { margin:0; font-size:18px; font-variant-numeric:tabular-nums; }
+.receipt-metadata { margin:18px 0; line-height:1.8; color:#52695d; }
+.receipt-table { overflow-x:auto; }
+.receipt-dialog table { font-size:13px; }
+.receipt-dialog th { padding:10px 8px; background:#f5f8f6; font-size:10px; letter-spacing:.06em; }
+.receipt-dialog td { padding:14px 8px; vertical-align:top; }
+.receipt-dialog td:first-child { width:52%; }
+.receipt-dialog th:last-child, .receipt-dialog td:last-child { text-align:right; white-space:nowrap; }
+.receipt-dialog td small { margin-top:4px; color:#6a7e72; font-size:11px; }
+.receipt-totals { padding:18px; background:#f5f8f6; border-radius:12px; font-variant-numeric:tabular-nums; }
+.receipt-grand-total { margin-top:8px !important; padding-top:12px; border-top:1px solid #d7e3da; font-size:18px; font-weight:700; }
+.receipt-payment { margin:12px 0; padding-left:12px; border-left:3px solid #b5d4bf; line-height:1.7; overflow-wrap:anywhere; }
+.receipt-payment small { color:#63786c; }
+.receipt-actions { display:flex; justify-content:flex-end; gap:10px; padding:18px 28px; background:#f6f9f7; border-top:1px solid #e4ebe6; flex-shrink:0; }
+.receipt-actions button { margin:0; font-size:13px; }
+@media(max-width:480px){.receipt-dialog{width:calc(100vw - 20px);max-height:calc(100dvh - 24px);border-radius:16px}.receipt-header{padding:16px}.receipt-header h2{font-size:17px}.receipt-body{padding:20px 16px}.receipt-actions{padding:14px 16px;flex-wrap:wrap}.receipt-actions button{flex:1;padding:10px;font-size:12px}.receipt-dialog th,.receipt-dialog td{padding:10px 5px}.receipt-dialog table{font-size:12px}}
+.print-document { background:white; color:#142c24; padding:20px 0; }
+.print-document table { min-width:0; width:100%; }
+@media(max-width:1050px){.pos-grid{grid-template-columns:1fr}.pos-cart{position:static}.pos-shift{flex-direction:column}}
+@media(max-width:480px){.pos-products{grid-template-columns:repeat(2,minmax(0,1fr))}.cart-quantity{flex-wrap:wrap}}
+
+/* Navegación por secciones y pantallas independientes de venta/caja. */
+.system-navigation { display:flex; flex-direction:column; gap:18px; margin-top:28px; flex-wrap:nowrap; }
+.nav-section { min-width:0; display:flex; flex-direction:column; gap:3px; }
+.nav-section h2 { margin:0 0 7px; padding:0 12px; color:#9ebbae; font-size:10px; font-weight:700; letter-spacing:.13em; text-transform:uppercase; }
+.system-navigation a { display:block; padding:10px 12px; font-size:13px; line-height:1.35; }
+.system-navigation a:hover { background:#204b40; color:white; }
+.system-navigation a.active { background:#2a5c4c; box-shadow:inset 3px 0 #a9d4b9; }
+.nav-children { display:flex; flex-direction:column; border-left:1px solid #42675a; margin-left:12px; padding-left:8px; gap:3px; }
+.nav-children a { font-size:12px; }
+.module-heading { display:flex; justify-content:space-between; align-items:flex-start; gap:20px; flex-wrap:wrap; margin-bottom:24px; }
+.module-heading h1 { margin-bottom:8px; }
+.module-heading .eyebrow { margin-bottom:8px; }
+.module-heading .lead { margin-bottom:0; }
+.module-actions { display:flex; flex-wrap:wrap; gap:10px; }
+.module-actions a, .module-heading>a { font-size:13px; white-space:nowrap; }
+@media(min-width:1024px){.system-sidebar{position:sticky;top:0;height:100dvh;padding:24px 18px}.system-navigation{flex:1;min-height:0;overflow-y:auto;padding-right:5px;scrollbar-width:thin;scrollbar-color:#527968 transparent}.system-sidebar .sidebar-bottom{padding-top:18px;flex-shrink:0}.system-sidebar .sidebar-bottom button{font-size:12px;padding:10px}}
+@media(max-width:1023px){.system-navigation{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:20px}.system-sidebar .sidebar-bottom{padding-top:20px}}
+.mobile-navigation-toggle { display:none; }
+@media(max-width:1023px){.mobile-navigation-toggle{display:flex;justify-content:space-between;align-items:center;width:100%;margin-top:20px;background:#204c40;border:1px solid #4b7464;color:white;padding:12px 14px;font-size:13px}.system-navigation:not(.is-expanded){display:none}.system-sidebar .sidebar-bottom{padding-top:14px}}
+
+/* Cada panel del POS conserva su desplazamiento; la rueda no se propaga al otro. */
+.pos-grid > .pos-panel { min-height:0; min-width:0; overflow-y:auto; overscroll-behavior-y:contain; scrollbar-gutter:stable; }
+.pos-grid > .pos-cart { position:static; }
+.pos-panel:focus-visible { outline:2px solid #bd791c; outline-offset:3px; }
+@media(min-width:1051px){.pos-grid > .pos-panel{height:var(--pos-panel-height,65dvh)}}
+@media(max-width:1050px){.pos-grid > .pos-panel{max-height:75dvh}}

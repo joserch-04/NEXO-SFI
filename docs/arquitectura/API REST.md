@@ -77,3 +77,7 @@ Las rutas de catálogo e inventario ya están implementadas; véase [[Fase 6]] p
 ## Configuración de identidad del negocio
 
 GET `/api/v1/configuracion/negocio`: sesión autenticada; PUT en la misma ruta: Administrador y configuracion.administrar. HTTPS y no-store. JSON name, tagline, version; PUT devuelve perfil normalizado y versión incrementada. 400 entrada inválida; 409 versión antigua. Véase [[Identidad y configuración del negocio]].
+
+## Implementación de Fase 7
+
+Las rutas efectivas de imágenes, cajas, turnos, ventas, comprobantes y anulaciones están documentadas en [[Fase 7]], sección Endpoints implementados. Las propuestas anteriores de esta nota se conservan como contexto histórico; para operar Fase 7 utilizar esos contratos y permisos.

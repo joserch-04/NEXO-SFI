@@ -37,7 +37,8 @@ public sealed class MySqlCatalogStore(MySqlConnectionFactory factory) : ICatalog
         public bool TrackInventory { get; set; }
         public bool Active { get; set; }
         public uint Version { get; set; }
-        public CatalogProduct View(long[] suppliers) => new(Id, Sku, Barcode, Name, CategoryId, SubcategoryId, Price, Cost, Unit, MinimumStock, TrackInventory, Active, Version, suppliers);
+        public string? ImageRef { get; set; }
+        public CatalogProduct View(long[] suppliers) => new(Id, Sku, Barcode, Name, CategoryId, SubcategoryId, Price, Cost, Unit, MinimumStock, TrackInventory, Active, Version, suppliers, ImageRef);
     }
     private sealed class MasterRow
     {
@@ -74,7 +75,8 @@ public sealed class MySqlCatalogStore(MySqlConnectionFactory factory) : ICatalog
             }
             await Run($"UPDATE {table} SET nombre=@Name,activo=@Active,version=version+1{extra} WHERE id=@Id", v); return v.Id;
         }
-        private const string ProductColumns = "p.id Id,p.sku Sku,p.codigo_barras Barcode,p.nombre Name,p.categoria_id CategoryId,p.subcategoria_id SubcategoryId,p.precio Price,p.costo Cost,p.unidad Unit,p.stock_minimo MinimumStock,p.controla_inventario TrackInventory,p.activo Active,p.version Version";
+        private const string ProductColumns = "p.id Id,p.sku Sku,p.codigo_barras Barcode,p.nombre Name,p.categoria_id CategoryId,p.subcategoria_id SubcategoryId,p.precio Price,p.costo Cost,p.unidad Unit,p.stock_minimo MinimumStock,p.controla_inventario TrackInventory,p.activo Active,p.version Version,p.imagen ImageRef";
+        public async Task SetImage(long id, string? reference) => await Run("UPDATE productos SET imagen=@reference,version=version+1 WHERE id=@id", new { id, reference });
         private async Task<IReadOnlyList<CatalogProduct>> ReadProducts(string where, object args, string tail)
         {
             var rows = await List<ProductRow>($"SELECT {ProductColumns} FROM productos p WHERE {where} {tail}", args);
