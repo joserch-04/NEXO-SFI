@@ -14,14 +14,14 @@ export interface Receipt { sale: Sale; lines: { id: number; name: string; sku: s
 export interface Reconciliation { shift: Shift; cashSales: number; cashIn: number; cashOut: number; cashRefunds: number; expected: number; card: number; transfer: number; pendingNonCashRefunds: number; movements: { id: number; type: string; amount: number; reason: string; date: string }[] }
 
 // Un error de transporte conserva exactamente el cuerpo y UUID del primer intento.
-export function OperationForm({ path, build, done, children, title }: { path: string; build: (d: FormData) => object; done: () => void; children: ReactNode; title: string }) {
+export function OperationForm({ path, build, done, children, title, onPendingChange }: { onPendingChange?: (pending: boolean) => void; path: string; build: (d: FormData) => object; done: () => void; children: ReactNode; title: string }) {
   const pending = useRef<object | null>(null), [busy, setBusy] = useState(false), [uncertain, setUncertain] = useState(false), [error, setError] = useState('');
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault(); if (busy) return;
     if (!pending.current) pending.current = { ...build(new FormData(e.currentTarget)), key: crypto.randomUUID() };
-    setBusy(true); setError('');
-    try { await api.request(path, { method: 'POST', body: JSON.stringify(pending.current) }); pending.current = null; setUncertain(false); done(); }
-    catch (err) { setError(errorText(err)); if (err instanceof ApiError && err.status >= 400 && err.status < 500) { pending.current = null; setUncertain(false); } else setUncertain(true); }
+    onPendingChange?.(true); setBusy(true); setError('');
+    try { await api.request(path, { method: 'POST', body: JSON.stringify(pending.current) }); pending.current = null; setUncertain(false); onPendingChange?.(false); done(); }
+    catch (err) { setError(errorText(err)); if (err instanceof ApiError && err.status >= 400 && err.status < 500) { pending.current = null; setUncertain(false); onPendingChange?.(false); } else setUncertain(true); }
     finally { setBusy(false); }
   }
   return <form onSubmit={submit}><fieldset disabled={busy || uncertain}>{children}</fieldset>{error && <p role="alert" className="notice">{error}</p>}{uncertain && <p>Respuesta sin confirmar. Reintentar conserva la misma operación y evita duplicarla.</p>}<button disabled={busy}>{busy ? 'Procesando…' : uncertain ? 'Reintentar misma operación' : title}</button></form>;

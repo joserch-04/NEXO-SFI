@@ -11,8 +11,8 @@ Los preparados como hot dog, nachos o café caliente deben mantener «Controlar 
 ## Abrir caja
 
 1. Ingresar con la cuenta personal. En la sección «Punto de venta» del menú abrir «Caja y turnos», o usar «Gestionar caja» desde el POS.
-2. Seleccionar una caja activa, disponible y operativa; ingresar fondo inicial contado físicamente.
-3. Confirmar «Abrir caja». Se muestra el turno propio. Si otra terminal abrió primero, recargar y seleccionar otra caja.
+2. En «Mi turno», desplegar «Abrir mi turno». Seleccionar una caja activa, disponible y operativa; ingresar fondo inicial contado físicamente.
+3. Confirmar «Confirmar apertura». Se muestra el turno propio. Si otra terminal abrió primero, recargar y seleccionar otra caja.
 
 Solo Administración puede crear/editar cajas. No se permite desactivar una caja abierta. Un cajero puede tener un solo turno abierto.
 
@@ -21,9 +21,9 @@ Solo Administración puede crear/editar cajas. No se permite desactivar una caja
 1. En Punto de venta, buscar por nombre, SKU o barras; o filtrar categoría/subcategoría.
 2. Un lector configurado como teclado debe escribir sobre «Buscar o escanear» y terminar con Enter. La coincidencia exacta de barras o SKU agrega el producto y devuelve el foco al buscador.
 3. Pulsar tarjetas para agregar. Usar +, − o cantidad decimal; «Quitar» elimina una línea.
-4. Agregar referencia de cliente cuando corresponda. Los descuentos son importes por línea y solo se muestran a usuarios autorizados.
-5. Ingresar efectivo recibido, tarjeta y/o transferencia. No introducir datos de tarjeta ni cuentas bancarias.
-6. Revisar total y cambio. «Cobrar» envía líneas y pagos; el servidor recalcula precios e impuestos actuales y confirma stock disponible.
+4. Desplegar «Agregar cliente» cuando corresponda. «Aplicar descuento» se abre en cada línea solo para usuarios autorizados; el descuento es un importe, no un porcentaje.
+5. El catálogo ocupa la página sin contenedor de altura fija. Agregar productos mantiene las imágenes visibles y solo actualiza el contador y total. La barra inferior compacta ofrece «Ver venta» para abrir cantidades, descuentos y cliente en una ventana; «Seguir agregando» la cierra. Pulsar «Cobrar» para abrir la ventana centrada de pago. Elegir Efectivo, Tarjeta NFC, Transferencia o Pago combinado. Solo se muestran los campos de la opción elegida. Al cambiar de método se limpian importes y referencias anteriores para no arrastrar pagos ocultos; se precarga el total en pagos individuales. En efectivo puede usarse «Importe exacto» o indicar el dinero recibido. No introducir datos de tarjeta ni cuentas bancarias.
+6. Revisar total, importe faltante o cambio y la referencia de los pagos no efectivos. «Volver a la venta» o Escape conserva cliente, carrito, descuentos e importes mientras no haya un cobro pendiente. «Confirmar cobro» envía líneas y pagos; el servidor recalcula precios e impuestos actuales y confirma stock disponible.
 7. Consultar el comprobante definitivo. Imprimir en térmica de 80 mm o A4 según el equipo. El diálogo del navegador permite elegir impresora.
 
 Ejemplo: total C$75, tarjeta C$25 y efectivo recibido C$100. Se aplican C$50 de efectivo y C$25 de tarjeta; se devuelven C$50. La caja gana C$50, no C$100. Un exceso cobrado solo con tarjeta se rechaza porque no corresponde entregar cambio en efectivo.
@@ -44,10 +44,10 @@ Una anulación de tarjeta o transferencia no revierte el banco: registra un pend
 
 ## Arqueo y cierre
 
-1. Abrir Caja y turnos → «Ver arqueo» del turno propio.
+1. Abrir Caja y turnos → Mi turno → «Arqueo y cierre». Para un cierre anterior: Historial → «Ver arqueo».
 2. Revisar fondo inicial, efectivo aplicado, ingresos, egresos y devoluciones.
 3. Revisar tarjeta/transferencia por separado y pendientes de reembolso externo.
-4. Contar el efectivo físico; la pantalla muestra contado−esperado como sobrante o faltante.
+4. Desplegar «Contar efectivo y cerrar turno». Contar el efectivo físico; la pantalla muestra contado−esperado como sobrante o faltante.
 5. Registrar observaciones y confirmar cierre definitivo.
 6. Consultar el historial y usar «Imprimir resumen» para conservar el cierre.
 
@@ -64,3 +64,9 @@ La distribución vigente de pantallas, menú y rutas está documentada en [[Nave
 ### Quién puede consultar un arqueo
 
 El cajero ve sus propios turnos y arqueos, abiertos o cerrados, cuando dispone de cajas.leer y cajas.arquear. Solo el Administrador con cajas.historial puede consultar los turnos de otros cajeros; necesita cajas.arquear para abrir su arqueo. Un permiso de historial asignado a un cajero no amplía ese acceso. Las operaciones de cierre siguen limitadas al turno propio abierto.
+
+## Pantalla de caja por tareas
+
+«Mi turno» muestra la caja abierta, fondo inicial y acciones principales. Los formularios de apertura y movimiento permanecen plegados hasta elegir su acción. «Historial» permite consultar aperturas y arqueos; «Cajas registradoras» muestra disponibilidad y ofrece crear o editar solo con el permiso existente. El formulario de caja aparece al pulsar Nueva caja o Editar caja y puede ocultarse con Cancelar.
+
+Mientras una apertura, movimiento o cierre está en proceso o sin respuesta confirmada, se bloquea el cambio interno de sección para conservar el formulario y su clave. Usar el reintento indicado; no recargar ni salir de la página ante un resultado incierto.

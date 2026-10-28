@@ -210,3 +210,52 @@ Resultado final ejecutado: 17/17 pruebas HTTP de privacidad aprobadas, cero fall
 ## Fotografías ajustadas al recuadro del POS
 
 Se cambió únicamente el ajuste CSS de las fotografías del POS a cover centrado. Verificaciones ejecutadas: npm run build correcto (TypeScript y Vite, 55 módulos) y git diff --check sin errores. No se ejecutó una nueva revisión visual en navegador ni pruebas de backend para este ajuste de presentación.
+
+## Diseño por tareas — 27 de octubre de 2026
+
+### Verificaciones ejecutadas
+
+- npm run build: TypeScript/Vite correctos, 59 módulos.
+- npm test: 11/11 pruebas existentes aprobadas; corresponden al cliente de sesión, no son pruebas unitarias de los nuevos pasos.
+- Recorrido en navegador con Cash, Pos, OperationForm y menú reales; sesión y API sustituidas por un arnés temporal con productos y turnos ficticios, sin escrituras MySQL ni cobros bancarios.
+- En 1440×1000, Mi turno muestra resumen y acciones sin formularios expandidos. Apertura y movimiento se abren al elegirlos; apertura enviada a la API ficticia y vuelta al resumen verificadas. Nueva caja se abre desde Cajas registradoras y Cancelar la oculta. No se probó guardar una caja en este recorrido.
+- Un importe de movimiento y su motivo se conservan al cambiar a Historial y volver. Ante respuesta perdida simulada se bloquean navegación y accesos de sección; Reintentar misma operación conserva exactamente cuerpo y UUID.
+- Carrito → cobro → carrito conserva producto, cliente y descuento. Una búsqueda exacta por código más Enter agrega un café preparado. Un descuento ficticio de C$5 sobre C$35 muestra total C$30.
+- Para total C$17, efectivo C$20 muestra cambio C$3; tarjeta sin referencia bloquea el cobro; al llenar referencia se habilita. Pago combinado de C$5 efectivo y C$12 transferencia con referencia habilita el cobro. Cambiar de método retira los valores previos.
+- Venta con tarjeta ante pérdida de respuesta simulada: Reintentar venta conserva cuerpo y UUID; al recuperar la respuesta se abre el comprobante y el carrito vuelve vacío al paso Productos. No es una nueva prueba transaccional MySQL.
+- Perfil de cajero con permiso de historial: otro cajero no aparece en la lista y no existe botón Nueva caja. Su arqueo muestra diferencia −C$5 al contar C$665 sobre esperado C$670; ese conteo se conserva al volver al resumen y entrar de nuevo. No se ejecutó cierre real.
+- Móvil 390×844: caja y POS sin desbordamiento horizontal (documento de 375 px). El detalle del cobro desplaza 546 px dentro de 391 px; el botón comienza a 715.91 px y queda separado del detalle, que termina a 701.91 px. Importe exacto habilita el cobro. Se corrigió un solapamiento inicial al trasladar el scroll de fieldset a un div.
+- No se observaron errores ni advertencias de consola al final del recorrido. No se repitieron pruebas de backend ni impresión física para este cambio de interfaz.
+
+![Caja por tareas — datos ficticios](evidencias/caja-guiada.png)
+![Cobro guiado — datos ficticios](evidencias/pos-cobro-guiado.png)
+![Cobro en móvil — datos ficticios](evidencias/pos-guiado-movil.png)
+
+## POS integrado — revisión posterior del 27 de octubre de 2026
+
+- Compilación npm run build ejecutada correctamente: TypeScript y Vite, 59 módulos.
+- Navegador con Pos, ProductImage y ReceiptView reales, y arnés temporal con sesión/API ficticias. No se modificó MySQL ni se cobraron pagos reales.
+- Escritorio 1440×1000: un marco único con catálogo completo y ticket inferior. Dos productos (arroz y café preparado) muestran total C$52, distintivos de cantidad y líneas de detalle. El detalle puede plegarse y el total permanece visible.
+- Efectivo recibido C$60 sobre total C$52: cambio C$8. Volver a la venta y abrir nuevamente conserva ese importe. Tarjeta sin referencia bloquea confirmar.
+- Respuesta perdida simulada al confirmar tarjeta: el modal permanece abierto ante Escape y ofrece Reintentar venta. El reintento conserva exactamente el cuerpo/UUID original; al recuperar la respuesta se abre el comprobante y el ticket vuelve vacío.
+- Móvil 390×844: sin desbordamiento horizontal (documento 375 px). Código de barras más Enter añade café preparado; aumentar cantidad a 2 da total C$70. Plegar el ticket conserva el total y el acceso a Cobrar.
+- Pago combinado C$20 efectivo + C$50 transferencia con referencia habilita la confirmación. El diálogo móvil mide 358×820 px y queda centrado en (16,12), con acciones visibles. Escape cierra normalmente cuando no existe solicitud pendiente.
+- Sin errores ni advertencias de consola observados. No se repitieron pruebas transaccionales de backend, autorización JWT real ni impresión física para esta revisión visual.
+
+![Catálogo y ticket integrados — datos ficticios](evidencias/pos-integrado.png)
+![Pago centrado — datos ficticios](evidencias/pos-pago-centrado.png)
+![POS integrado en móvil — datos ficticios](evidencias/pos-integrado-movil.png)
+
+Suite ejecutada tras esta revisión: npm test, 11/11 pruebas existentes del cliente de sesión aprobadas. Arnés temporal retirado al finalizar.
+
+## Catálogo libre y fotografías visibles al agregar
+
+- npm run build ejecutado: TypeScript/Vite correctos, 59 módulos.
+- Revisión con Pos real y sesión/API ficticias; sin operaciones MySQL ni confirmación de ventas.
+- Escritorio 1440×800, 18 productos ficticios: imagen de 100 px antes y después de agregar tres productos; catálogo de 761 px con overflow visible y cero diálogos abiertos automáticamente. Barra inferior de 84.04 px, ubicada entre y=703.96 e y=788.
+- Ver venta abre el detalle; aumentar una cantidad y Seguir agregando conserva total C$100. Abrir/cerrar el pago con Escape conserva efectivo C$100. Cobrar desde el detalle abre el pago sin superponer ambos diálogos.
+- Móvil 390×844: documento de 375 px, sin desbordamiento horizontal. Catálogo con overflow visible; barra de 81.75 px entre y=750.25 e y=832, sin panel expandido que reduzca fotografías.
+- Quitar las tres líneas cierra automáticamente el detalle y devuelve total C$0. Sin errores ni advertencias de consola observados.
+- No se repitieron suites de backend ni pruebas de impresión o cobros reales para este ajuste visual. Arnés temporal retirado después de la revisión.
+
+![Fotografías visibles con tres productos agregados — datos ficticios](evidencias/pos-catalogo-libre.png)
