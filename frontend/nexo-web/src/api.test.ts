@@ -8,6 +8,15 @@ beforeEach(() => {
 });
 afterEach(() => { vi.useRealTimers(); vi.unstubAllGlobals(); });
 describe('Cliente de sesión', () => {
+  it('explica una ruta ausente en una API anterior sin repetir el registro ni cerrar sesión', async () => {
+    const fetch = vi.fn().mockResolvedValue(new Response(null, { status: 404 }));
+    vi.stubGlobal('fetch', fetch);
+    const client = new ApiClient(); client.session = session('vigente');
+    await expect(client.request('/inventario/recepciones', { method: 'POST', body: '{}' }))
+      .rejects.toMatchObject({ status: 404, message: expect.stringContaining('recompila y reinicia la API') });
+    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(client.session).not.toBeNull();
+  });
   it('coordina dos renovaciones y envía cookie y protección CSRF', async () => {
     const fetch = vi.fn().mockResolvedValue(json(session('nuevo'))); vi.stubGlobal('fetch', fetch);
     const client = new ApiClient(); client.session = session('anterior'); await Promise.all([client.refresh(), client.refresh()]);

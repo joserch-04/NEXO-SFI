@@ -35,6 +35,7 @@ builder.Services.AddScoped<IDatabaseProbe>(services => new MySqlDatabaseProbe(
 builder.Services.AddScoped<ReadinessService>();
 builder.AddSecurity();
 builder.AddCatalog();
+builder.AddInventoryOperations();
 builder.AddBusinessProfile();
 builder.AddPos();
 builder.Services.AddOpenApi();
@@ -77,6 +78,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapSecurity();
 app.MapCatalog();
+app.MapInventoryOperations();
 app.MapBusinessProfile();
 app.MapPos();
 if (app.Environment.IsDevelopment()) app.MapOpenApi();

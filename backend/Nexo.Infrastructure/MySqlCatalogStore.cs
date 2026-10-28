@@ -7,7 +7,7 @@ namespace Nexo.Infrastructure;
 
 // Un bloqueo corto del módulo serializa escrituras y reintentos, incluso entre procesos API.
 // Las lecturas comparten una instantánea; saldos, historial, idempotencia y auditoría confirman juntos.
-public sealed class MySqlCatalogStore(MySqlConnectionFactory factory) : ICatalogStore
+public sealed partial class MySqlCatalogStore(MySqlConnectionFactory factory) : ICatalogStore
 {
     public async Task<T> Execute<T>(Func<ICatalogSession, Task<T>> action)
     {
@@ -53,7 +53,7 @@ public sealed class MySqlCatalogStore(MySqlConnectionFactory factory) : ICatalog
         public string? Phone { get; set; }
         public CatalogMaster View() => new(Id, Name, Active, Version, Code, Type, ParentId, Identification, Phone);
     }
-    private sealed class Session(MySqlConnection c, MySqlTransaction tx) : ICatalogSession
+    private sealed partial class Session(MySqlConnection c, MySqlTransaction tx) : ICatalogSession
     {
         private Task<int> Run(string sql, object? args = null) => c.ExecuteAsync(sql, args, tx);
         private Task<T> Scalar<T>(string sql, object? args = null) => c.ExecuteScalarAsync<T>(sql, args, tx)!;
@@ -107,16 +107,6 @@ public sealed class MySqlCatalogStore(MySqlConnectionFactory factory) : ICatalog
             WHERE p.controla_inventario=1 AND (@productId IS NULL OR p.id=@productId)
             AND (@locationId IS NULL OR e.ubicacion_id=@locationId) ORDER BY p.nombre,p.id,u.codigo
             """, new { productId, locationId });
-        public Task<IReadOnlyList<MovementView>> Movements(DateTime from, DateTime to, long? productId, string? type, int offset, int limit) => List<MovementView>("""
-            SELECT m.id Id,m.operacion_id OperationId,m.producto_id ProductId,p.nombre Product,
-            m.ubicacion_id LocationId,u.codigo Location,m.delta Delta,
-            IF(o.traslado,'TRASLADO',o.tipo) Type,o.motivo Reason,m.usuario_id UserId,us.nombre_usuario Username,m.creado_en CreatedAt
-            FROM movimientos_inventario m JOIN operaciones_inventario o ON o.id=m.operacion_id
-            JOIN productos p ON p.id=m.producto_id JOIN ubicaciones u ON u.id=m.ubicacion_id JOIN usuarios us ON us.id=m.usuario_id
-            WHERE m.creado_en>=@from AND m.creado_en<@to AND (@productId IS NULL OR m.producto_id=@productId)
-            AND (@type IS NULL OR IF(o.traslado,'TRASLADO',o.tipo)=@type)
-            ORDER BY m.creado_en DESC,m.id DESC LIMIT @limit OFFSET @offset
-            """, new { from, to, productId, type, offset, limit });
         public async Task<long?> Previous(long actor, string key, byte[] hash)
         {
             var old = await c.QuerySingleOrDefaultAsync<(byte[] Hash, long Id)?>("SELECT hash_solicitud,recurso_id FROM operaciones_idempotentes WHERE usuario_id=@actor AND tipo='INVENTARIO' AND clave=@key", new { actor, key }, tx);
@@ -136,7 +126,7 @@ public sealed class MySqlCatalogStore(MySqlConnectionFactory factory) : ICatalog
                 decimal balance;
                 try { balance = InventoryRules.Balance(current, delta); } catch (InvalidOperationException) { throw new CatalogError(409, "insufficient_stock"); }
                 await Run("UPDATE existencias_ubicacion SET cantidad=@balance WHERE producto_id=@ProductId AND ubicacion_id=@location", new { balance, input.ProductId, location });
-                await Run("INSERT INTO movimientos_inventario(producto_id,delta,operacion_id,tipo,usuario_id,creado_en,ubicacion_id) VALUES(@ProductId,@delta,@id,'MANUAL',@actor,UTC_TIMESTAMP(6),@location)", new { input.ProductId, delta, id, actor, location });
+                await Run("INSERT INTO movimientos_inventario(producto_id,delta,operacion_id,tipo,usuario_id,creado_en,ubicacion_id,cantidad_anterior,cantidad_posterior) VALUES(@ProductId,@delta,@id,'MANUAL',@actor,UTC_TIMESTAMP(6),@location,@current,@balance)", new { input.ProductId, delta, id, actor, location, current, balance });
             }
             var delta = input.Type is "SALIDA" or "TRASLADO" ? -input.Quantity : input.Quantity;
             await Change(input.LocationId, delta);

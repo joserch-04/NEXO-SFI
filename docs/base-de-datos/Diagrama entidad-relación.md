@@ -265,3 +265,7 @@ La participación de un padre puede ser opcional cuando la FK admite NULL. Una F
 ## Actualización Fase 6
 
 Ver [[Fase 6]] para el diagrama de catálogo efectivo. Se agregaron subcategorías y ubicaciones jerárquicas; existencias_ubicacion relaciona cada producto con varias áreas/estantes. El saldo global existencias se conserva y se verifica contra el detalle. La migración 005 y sus claves compuestas son la fuente del esquema vigente.
+
+## Extensión de inventario operativo
+
+La migración 010 agrega conteos_inventario y detalle_conteos_inventario, motivo_codigo en operaciones y cantidades anterior/posterior en movimientos. Diagrama y reglas vigentes en [[Inventario operativo]]. Las columnas de saldo histórico son anulables para registros anteriores; no se inventan valores retrospectivos.

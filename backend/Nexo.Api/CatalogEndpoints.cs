@@ -43,7 +43,7 @@ public static class CatalogEndpoints
         catalog.MapDelete("/productos/{id:long}", async (long id, uint version, CatalogService s, HttpContext c) => { var p = await s.Product(id) ?? throw new SecurityError(404, "catalog_not_found"); await s.SaveProduct(Actor(c), p with { Active = false, Version = version }); return Results.NoContent(); }).RequireAuthorization("catalogo.administrar");
         catalog.MapGet("/inventario/existencias", (CatalogService s, long? productId, long? locationId) => s.Stocks(productId, locationId)).RequireAuthorization("inventario.leer");
         catalog.MapGet("/inventario/stock-bajo", (CatalogService s) => s.LowStock()).RequireAuthorization("inventario.leer");
-        catalog.MapGet("/inventario/movimientos", (CatalogService s, DateTime from, DateTime to, long? productId, string? type, int page = 1, int pageSize = 25) => s.Movements(from, to, productId, type, page, pageSize)).RequireAuthorization("inventario.leer");
+        catalog.MapGet("/inventario/movimientos", (CatalogService s, DateTime from, DateTime to, long? productId, string? type, long? locationId, int page = 1, int pageSize = 25) => s.Movements(from, to, productId, type, page, pageSize, locationId)).RequireAuthorization("inventario.leer");
         foreach (var (path, type, permission) in new[] { ("entradas", "ENTRADA", "inventario.entradas"), ("salidas", "SALIDA", "inventario.ajustar"), ("ajustes", "AJUSTE", "inventario.ajustar"), ("traslados", "TRASLADO", "inventario.ajustar") })
             catalog.MapPost("/inventario/" + path, async (InventoryInput input, CatalogService s, HttpContext c) => { CatalogService.Require(input.Type == type); return new { id = await s.Move(Actor(c), input) }; }).RequireAuthorization(permission);
     }

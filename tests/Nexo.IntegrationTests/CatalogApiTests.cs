@@ -18,7 +18,7 @@ public class CatalogApiTests
     public async Task Authorized_catalog_routes_bind_and_read_real_mysql()
     {
         using var f = new Factory(); using var c = f.CreateClient(new() { BaseAddress = new("https://localhost") });
-        foreach (var path in new[] { "/categorias", "/subcategorias", "/proveedores", "/ubicaciones", "/productos?active=true&pageSize=100", "/productos/1", "/inventario/existencias", "/inventario/stock-bajo", "/inventario/movimientos?from=" + DateTime.UtcNow.AddDays(-1).ToString("yyyy-MM-dd") + "&to=" + DateTime.UtcNow.AddDays(1).ToString("yyyy-MM-dd") })
+        foreach (var path in new[] { "/inventario/conteos", "/categorias", "/subcategorias", "/proveedores", "/ubicaciones", "/productos?active=true&pageSize=100", "/productos/1", "/inventario/existencias", "/inventario/stock-bajo", "/inventario/movimientos?from=" + DateTime.UtcNow.AddDays(-1).ToString("yyyy-MM-dd") + "&to=" + DateTime.UtcNow.AddDays(1).ToString("yyyy-MM-dd") })
         {
             var response = await c.GetAsync("/api/v1" + path);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);

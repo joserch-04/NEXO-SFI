@@ -64,3 +64,7 @@ Las fotos se guardan en `App_Data/product-images`, o en `Storage:ProductImages`.
 
 Los comprobantes tienen tipo interno sin validez fiscal. Tarjeta/transferencia son registros de cobros gestionados externamente; una anulación no ejecuta un reembolso bancario.
 Ampliación de Fase 7: referencia obligatoria en tarjeta/transferencia (migración 009). Terminal NFC independiente simulada y referencia visible en consulta/reimpresión; no se realizan cobros bancarios. Véase [Referencias de pagos](docs/arquitectura/Referencias%20de%20pagos.md).
+
+### Actualización de inventario operativo
+
+Aplicar las migraciones pendientes con `pwsh -NoProfile -File database/Manage-Database.ps1 Migrate` antes de arrancar la API actualizada. La migración 010 incorpora conteos y permisos de captura/aprobación, asignados inicialmente al Administrador. Reiniciar/recompilar la API y renovar sesión. Guía: [Inventario operativo](docs/arquitectura/Inventario%20operativo.md); evidencia: [Verificación](docs/pruebas/Verificación%20inventario%20operativo.md).

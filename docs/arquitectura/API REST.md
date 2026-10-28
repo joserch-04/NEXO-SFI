@@ -81,3 +81,17 @@ GET `/api/v1/configuracion/negocio`: sesión autenticada; PUT en la misma ruta: 
 ## Implementación de Fase 7
 
 Las rutas efectivas de imágenes, cajas, turnos, ventas, comprobantes y anulaciones están documentadas en [[Fase 7]], sección Endpoints implementados. Las propuestas anteriores de esta nota se conservan como contexto histórico; para operar Fase 7 utilizar esos contratos y permisos.
+
+## Inventario operativo vigente (27 de octubre de 2026)
+
+Ampliación bajo /api/v1/inventario. Contratos JSON, transacciones, validaciones y errores en [[Inventario operativo]].
+
+|Método y ruta relativa|Permiso|
+|---|---|
+|POST /recepciones|inventario.entradas|
+|POST /salidas-mercancia y /traslados-mercancia|inventario.ajustar|
+|GET /conteos y /conteos/{id}|inventario.leer|
+|POST /conteos; PUT /conteos/{id}; POST /conteos/{id}/enviar y /cancelar|inventario.conteos|
+|POST /conteos/{id}/aprobar|inventario.aprobar|
+
+Los dos permisos nuevos se asignan inicialmente a Administrador. El historial admite ubicación y muestra movimientos del POS, saldos anterior/posterior y datos del documento cuando existen. Los endpoints individuales anteriores conservan sus políticas.

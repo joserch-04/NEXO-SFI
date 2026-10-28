@@ -95,7 +95,8 @@ public sealed class MySqlPosStore(MySqlConnectionFactory factory) : IPosStore
   }
   private async Task Change(long actor,long product,long location,decimal delta,long detail,string type)
   {
-   await Run("UPDATE existencias_ubicacion SET cantidad=cantidad+@delta WHERE producto_id=@product AND ubicacion_id=@location; UPDATE existencias SET cantidad=cantidad+@delta WHERE producto_id=@product; INSERT INTO movimientos_inventario(producto_id,delta,detalle_venta_id,tipo,usuario_id,creado_en,ubicacion_id) VALUES(@product,@delta,@detail,@type,@actor,UTC_TIMESTAMP(6),@location)",new{actor,product,location,delta,detail,type});
+   var before=await Scalar<decimal>("SELECT cantidad FROM existencias_ubicacion WHERE producto_id=@product AND ubicacion_id=@location FOR UPDATE",new{product,location});
+   await Run("UPDATE existencias_ubicacion SET cantidad=cantidad+@delta WHERE producto_id=@product AND ubicacion_id=@location; UPDATE existencias SET cantidad=cantidad+@delta WHERE producto_id=@product; INSERT INTO movimientos_inventario(producto_id,delta,detalle_venta_id,tipo,usuario_id,creado_en,ubicacion_id,cantidad_anterior,cantidad_posterior) VALUES(@product,@delta,@detail,@type,@actor,UTC_TIMESTAMP(6),@location,@before,@after)",new{actor,product,location,delta,detail,type,before,after=before+delta});
   }
   public async Task<long> Void(long actor,Receipt receipt,VoidInput input)
   {

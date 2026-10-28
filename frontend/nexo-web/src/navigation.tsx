@@ -18,7 +18,9 @@ export function SidebarNavigation({ user }: { user: Identity }) {
       {has('proveedores.leer') && <NavLink to="/proveedores">Proveedores</NavLink>}
     </section>}
     {(has('inventario.leer') || has('catalogo.leer')) && <section className="nav-section" aria-labelledby="nav-inventory"><h2 id="nav-inventory">Inventario</h2>
-      {has('inventario.leer') && <NavLink to="/inventario">Existencias y movimientos</NavLink>}{has('catalogo.leer') && <NavLink to="/ubicaciones">Ubicaciones</NavLink>}
+      {has('inventario.leer') && <><NavLink to="/inventario" end>Existencias</NavLink>
+      {has('catalogo.leer') && (has('inventario.entradas') || has('inventario.ajustar')) && <details className="nav-inventory-operations" open><summary>Operaciones</summary><div className="nav-children">{has('inventario.entradas') && <NavLink to="/inventario/operaciones/entradas">Entradas de mercancía</NavLink>}{has('inventario.ajustar') && <><NavLink to="/inventario/operaciones/salidas">Salidas y mermas</NavLink><NavLink to="/inventario/operaciones/traslados">Traslados</NavLink></>}</div></details>}
+      <NavLink to="/inventario/conteos">Conteos y ajustes</NavLink><NavLink to="/inventario/historial">Historial de movimientos</NavLink></>}{has('catalogo.leer') && <NavLink to={has('inventario.leer') ? '/inventario/ubicaciones' : '/ubicaciones'}>Ubicaciones</NavLink>}
     </section>}
     {(has('usuarios.leer') || has('roles.leer') || configure) && <section className="nav-section" aria-labelledby="nav-administration"><h2 id="nav-administration">Administración</h2>
       {has('usuarios.leer') && <NavLink to="/usuarios">Usuarios</NavLink>}{has('roles.leer') && <NavLink to="/roles">Roles y permisos</NavLink>}{configure && <NavLink to="/configuracion">Configuración</NavLink>}

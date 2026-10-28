@@ -57,3 +57,7 @@ Se leyó el archivo de instrucciones y se inspeccionó el árbol existente. La b
 Ampliación de cobros de Fase 7: [[Referencias de pagos]] explica el registro manual obligatorio de referencia de tarjeta/transferencia y su relación con terminales NFC de producción.
 
 Organización actual de la interfaz: [[Navegación por secciones]] — POS independiente, caja e historial derivados y menú agrupado.
+
+Ampliación de inventario del 27 de octubre: [[Inventario operativo]] documenta entradas multilínea, salidas y mermas, traslados y conteos con aprobación; [[Verificación inventario operativo]] conserva pruebas y capturas.
+
+Interfaz actual de Catálogo y autocompletado de inventario: [[Diseño del catálogo y búsqueda de productos]].

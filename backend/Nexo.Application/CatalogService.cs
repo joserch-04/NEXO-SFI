@@ -61,11 +61,11 @@ public sealed class CatalogService(ICatalogStore store)
     });
     public Task<IReadOnlyList<StockView>> Stocks(long? productId, long? locationId) => store.Execute(db => db.Stocks(productId, locationId));
     public Task<IReadOnlyList<StockView>> LowStock() => store.Execute<IReadOnlyList<StockView>>(async db => (await db.Stocks(null, null)).GroupBy(x => x.ProductId).Select(g => g.First() with { LocationId = 0, Location = "Total tienda", Quantity = g.Sum(x => x.Quantity) }).Where(x => x.Active && x.Quantity <= x.MinimumStock).ToArray());
-    public Task<IReadOnlyList<MovementView>> Movements(DateTime from, DateTime to, long? productId, string? type, int page, int size)
+    public Task<IReadOnlyList<MovementView>> Movements(DateTime from, DateTime to, long? productId, string? type, int page, int size, long? locationId = null)
     {
         Page(page, size); Require(from < to && to - from <= TimeSpan.FromDays(366));
-        Require(type == null || new[] { "ENTRADA", "SALIDA", "AJUSTE", "TRASLADO" }.Contains(type));
-        return store.Execute(db => db.Movements(from, to, productId, type, (page - 1) * size, size));
+        Require(type == null || new[] { "ENTRADA", "SALIDA", "AJUSTE", "TRASLADO", "VENTA", "ANULACION", "DEVOLUCION" }.Contains(type));
+        return store.Execute(db => db.Movements(from, to, productId, type, (page - 1) * size, size, locationId));
     }
     public Task<long> Move(long actor, InventoryInput input) => store.Execute(async db =>
     {

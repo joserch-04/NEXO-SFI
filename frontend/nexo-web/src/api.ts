@@ -6,6 +6,11 @@ export class ApiError extends Error {
   constructor(public status: number, public code: string, public traceId?: string) { super(messages[code] ?? messages[`http_${status}`] ?? 'No se pudo completar la operación. Inténtalo nuevamente.'); }
 }
 const messages: Record<string, string> = {
+  http_404: 'La API no reconoce esta ruta. Si acabas de actualizar NEXO, recompila y reinicia la API y vuelve a intentar.',
+  invalid_inventory_operation: 'Revisa los productos, cantidades, costo, proveedor, referencia y motivo de la operación.',
+  count_not_found: 'El conteo ya no existe.', count_locked: 'Este conteo no admite esa operación en su estado actual.',
+  count_incomplete: 'Registra y guarda la cantidad de todos los productos antes de enviar el conteo.',
+  count_stock_changed: 'Hubo movimientos después de iniciar este conteo. Cancélalo e inicia uno nuevo para volver a contar antes de ajustar.',
   payment_reference_required: 'Ingresá la referencia de cada pago con tarjeta o transferencia.',
   invalid_payment_reference: 'La referencia admite hasta 100 caracteres: letras, números, espacios, guiones, punto, barra o dos puntos. No ingresés datos de tarjeta.',
   cash_reference_not_allowed: 'El pago en efectivo no lleva referencia bancaria.',

@@ -23,7 +23,7 @@ La separación es de interfaz, no cambia la regla de negocio: para confirmar ven
 - **General:** Inicio.
 - **Punto de venta:** Punto de venta, con Caja y turnos y Ventas y comprobantes como opciones derivadas.
 - **Catálogo:** Productos, Categorías, Subcategorías y Proveedores.
-- **Inventario:** Existencias y movimientos; Ubicaciones.
+- **Inventario:** Existencias (con Alertas); Operaciones desplegable (Entradas de mercancía, Salidas y mermas, Traslados); Conteos y ajustes; Historial de movimientos; Ubicaciones. Véase [[Inventario operativo]].
 - **Administración:** Usuarios, Roles y permisos; Configuración.
 - **Personal:** Mi cuenta.
 

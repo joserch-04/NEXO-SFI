@@ -161,3 +161,9 @@ A solicitud del usuario, la pantalla se organiza como espacio de trabajo: Existe
 Se mantienen los endpoints, validaciones y permisos del servidor. No se agregaron bibliotecas ni se modificó el esquema. El detalle de ubicación requiere inventario.leer; el botón de movimiento necesita catálogo.leer y el permiso de escritura correspondiente. Las tablas se desplazan horizontalmente en pantallas estrechas.
 
 **Defensa:** ¿Por qué conservar el borrador al cerrar? Cerrar el panel es navegación; no debe descartar datos ni generar otra operación después de una respuesta perdida. ¿Por qué consultar el historial al abrir su pestaña? Evita descargar contenido que el operador todavía no necesita.
+
+## Ampliación operativa del 27 de octubre de 2026
+
+La interfaz actual separa Existencias, Operaciones, Conteos y ajustes, Historial y Ubicaciones. Entradas, salidas y traslados admiten documentos multilínea; los conteos guardan cantidades físicas y requieren aprobación para ajustar. La migración 010 agrega saldos históricos, motivos y conteos. Contratos, permisos y decisiones vigentes en [[Inventario operativo]]; resultados en [[Verificación inventario operativo]]. El flujo anterior de panel único queda sustituido en el cliente; los endpoints individuales permanecen por compatibilidad.
+
+La consulta y edición actual del catálogo, y el buscador único de inventario, están descritos en [[Diseño del catálogo y búsqueda de productos]].

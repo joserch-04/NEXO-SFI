@@ -254,6 +254,8 @@ public class SecurityTests
     [InlineData("/api/v1/subcategorias")]
     [InlineData("/api/v1/proveedores")]
     [InlineData("/api/v1/ubicaciones")]
+    [InlineData("/api/v1/inventario/conteos")]
+    [InlineData("/api/v1/inventario/conteos/1")]
     [InlineData("/api/v1/inventario/existencias")]
     [InlineData("/api/v1/inventario/stock-bajo")]
     [InlineData("/api/v1/inventario/movimientos?from=2026-10-01&to=2026-10-02")]
@@ -270,6 +272,13 @@ public class SecurityTests
     [InlineData("/api/v1/subcategorias")]
     [InlineData("/api/v1/proveedores")]
     [InlineData("/api/v1/ubicaciones")]
+    [InlineData("/api/v1/inventario/recepciones")]
+    [InlineData("/api/v1/inventario/salidas-mercancia")]
+    [InlineData("/api/v1/inventario/traslados-mercancia")]
+    [InlineData("/api/v1/inventario/conteos")]
+    [InlineData("/api/v1/inventario/conteos/1/enviar")]
+    [InlineData("/api/v1/inventario/conteos/1/cancelar")]
+    [InlineData("/api/v1/inventario/conteos/1/aprobar")]
     [InlineData("/api/v1/inventario/entradas")]
     [InlineData("/api/v1/inventario/salidas")]
     [InlineData("/api/v1/inventario/ajustes")]
@@ -296,6 +305,7 @@ public class SecurityTests
         Assert.Equal(HttpStatusCode.Forbidden, (await c.PostAsJsonAsync(path, new { })).StatusCode);
     }
     [Theory]
+    [InlineData("/api/v1/inventario/conteos/1")]
     [InlineData("/api/v1/productos/1/imagen")]
     [InlineData("/api/v1/cajas/1")]
     public async Task Pos_put_requires_specific_permission(string path)

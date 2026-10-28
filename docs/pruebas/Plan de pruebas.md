@@ -40,3 +40,7 @@ Véase [[Verificación Fase 6]]: pruebas automatizadas de clasificación, produc
 ## Identidad del negocio
 
 [[Verificación identidad del negocio]] registra validaciones de nombre/lema, lectura autenticada, edición exclusiva de Administrador con permiso, HTTPS, versión obsoleta, persistencia MySQL y auditoría atómica. Incluye revisión visual con datos simulados. Pendientes: recorrido real en varias terminales LAN y propagación de una sesión ya abierta mediante recarga.
+
+## Inventario operativo
+
+Resultados ejecutados y límites en [[Verificación inventario operativo]]. El script database/Test-InventoryOperations.ps1 ejecuta la suite completa en una base temporal con todas las migraciones. Cubre atomicidad multilínea, no negativos, reintentos, permisos, concurrencia, conteos y regresión POS. Pendiente recorrido real entre terminales LAN.
